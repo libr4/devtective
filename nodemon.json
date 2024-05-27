@@ -1,0 +1,6 @@
+{
+    "watch": ["."],
+    "ext": "ts",
+    "exec": "tsc && node --experimental-specifier-resolution=node dist/server.js"
+  }
+  
