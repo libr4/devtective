@@ -12,7 +12,7 @@ export function handleError(res, error) {
     const genericMessage = "Ocorreu um erro. Tente mais tarde!";
     const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
     let messages;
-    if (error instanceof ValidationError || NotFoundError) {
+    if (error instanceof ValidationError || error instanceof NotFoundError) {
         messages = error.messages;
     }
     else if (error instanceof Error) {
@@ -22,6 +22,8 @@ export function handleError(res, error) {
         messages = [genericMessage];
     }
     let response = { messages };
+    console.log("passou aqui");
+    console.log(messages);
     // const messages = { messages:(error.messages || (error.message ? [error.message] : false) || [ genericMessage ])};
     return res.status(statusCode).json(response);
 }

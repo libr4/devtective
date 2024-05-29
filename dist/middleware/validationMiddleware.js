@@ -34,3 +34,7 @@ export const validateRegisterInput = handleValidationErrors([
         .notEmpty().withMessage('password é obrigatório')
         .isLength({ min: MIN_PASSWORD }).withMessage(`O password deve ter no mínimo ${MIN_PASSWORD} caracteres`)
 ]);
+export const validateLoginInput = handleValidationErrors([
+    body("username").notEmpty().withMessage("Username precisa ser preenchido"),
+    body("password").notEmpty().withMessage("Password precisa ser preenchido"),
+]);

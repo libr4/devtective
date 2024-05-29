@@ -11,15 +11,17 @@ import {
     deleteTask
 } from '../controllers/taskController.js'
 import { validateIdParam, validateTaskData } from '../middleware/taskValidationMiddleware.js';
-import { validateRegisterInput } from '../middleware/validationMiddleware.js';
+import { validateLoginInput, validateRegisterInput } from '../middleware/validationMiddleware.js';
 import { createUser } from '../controllers/userController.js';
+import { login } from '../controllers/authController .js';
 
 authRouter.route('/register')
     .post(validateRegisterInput,createUser);
 
-authRouter.route('/:taskId')
-    .get(validateIdParam, getTask)
-    .patch(validateIdParam, updateTask)
-    .delete(validateIdParam, deleteTask);
+authRouter.route('/login')
+    .post(validateLoginInput, login)
+    // .get(validateIdParam, getTask)
+    // .patch(validateIdParam, updateTask)
+    // .delete(validateIdParam, deleteTask);
 
 export default authRouter

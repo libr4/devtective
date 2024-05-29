@@ -10,6 +10,7 @@ import userRouter from './routes/userRouter.js'
 import authRouter from './routes/authRouter.js'
 import errorHandlerMiddleware from './middleware/errorHandlerMiddleware.js';
 import projectRouter from './routes/projectRouter.js';
+import cookieParser from 'cookie-parser';
 const app = express();
 
 // app.use(express.urlencoded({ extended: true }));

@@ -3,7 +3,7 @@ import { USER_ROLES } from '../utils/constants.js';
 const UserSchema = new mongoose.Schema({
     username: String,
     email: String,
-    passwordHash: String, // Hashed password
+    password: String, // Hashed password
     role: {
         type: String,
         enum: USER_ROLES,
