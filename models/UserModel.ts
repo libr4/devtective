@@ -2,14 +2,14 @@ import mongoose from 'mongoose';
 import { USER_ROLES } from '../utils/constants.js';
 
 export interface IUser {
-    username: String,
-    email: String,
-    passwordHash: String, // Hashed password
+    username: string,
+    email: string,
+    password: string, // Hashed password
     role: USER_ROLES, // e.g., "admin", "developer", "manager"
-    firstName: String,
-    lastName: String,
+    firstName: string,
+    lastName: string,
     // profilePictureUrl: String, // URL to the user's profile picture
-    status: String, // e.g., "active", "inactive", "banned"
+    status: string, // e.g., "active", "inactive", "banned"
     lastLogin: Date, // Last login timestamp
     createdAt: Date,
     updatedAt: Date,
@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     
     username: String,
     email: String,
-    passwordHash: String, // Hashed password
+    password: String, // Hashed password
     role: {
         type:String,
         enum:USER_ROLES,

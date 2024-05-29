@@ -1,39 +1,36 @@
 import {Request, Response} from 'express'
 import { StatusCodes } from 'http-status-codes';
-import { NotFoundError } from '../errors/customErrors.js';
+import { NotFoundError, UnauthenticatedError } from '../errors/customErrors.js';
 import Task, { ITask } from '../models/TaskModel.js'
 import User, {IUser} from '../models/UserModel.js';
 import { TaskRequest } from '../middleware/taskValidationMiddleware.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
 import bcrypt from 'bcryptjs'
+import { comparePassword, createJWT } from '../utils/authUtils.js';
 
-const getAllUsers= async (req:Request, res:Response) => {
+const login = async (req:Request, res:Response) => {
     try {
-        const allUsers = await User.find({});
-        return res.status(StatusCodes.OK).json(allUsers);
-    } catch (error) {
-        handleError(res, error);
-    }
-}
-
-const createUser = async (req:Request, res:Response) => {
-    try {
-        const isFirstUser = await User.countDocuments() === 0;
-        if (isFirstUser) {
-            req.body.role = "Admin";
+        const user = await User.findOne({username:req.body.username});
+        const isValidUser = user && await comparePassword(req.body.password, user.password);
+        if (!isValidUser) {
+            throw new UnauthenticatedError("Credenciais inválidas")
         }
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
-        req.body.password = hashedPassword;
-        const user = await User.create(req.body)
-        // return res.status(StatusCodes.CREATED).json({message:"Usuário criado!"});
-        return res.status(StatusCodes.CREATED).json(user);
+        const token = createJWT({
+            _id:user._id,
+             role:user.role
+        })
+        const oneDay = 60 * 60 * 60 * 24;
+        const isProduction = process.env.NODE_ENV === "production";
+        res.cookie('token', token, {
+            httpOnly:true,
+            expires:new Date(Date.now() + oneDay),
+            secure:isProduction
+        })
+        return res.status(200).json({message:'user logged in'});
     } catch (error) {
         handleError(res, error);
     }
-    
 }
-
 // const getTask = async (req:TaskRequest, res:Response) => {
 //     const task = req.task;
 //     return res.status(StatusCodes.OK).json(task);
@@ -72,4 +69,4 @@ const deleteUser = async (req:TaskRequest, res:Response) => {
     }
 }
 
-export {getAllUsers, createUser, deleteUser}
+export {login, deleteUser}

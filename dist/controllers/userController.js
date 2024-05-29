@@ -3,6 +3,7 @@ import { NotFoundError } from '../errors/customErrors.js';
 import Task from '../models/TaskModel.js';
 import User from '../models/UserModel.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
+import bcrypt from 'bcryptjs';
 const getAllUsers = async (req, res) => {
     try {
         const allUsers = await User.find({});
@@ -18,7 +19,11 @@ const createUser = async (req, res) => {
         if (isFirstUser) {
             req.body.role = "Admin";
         }
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+        req.body.password = hashedPassword;
         const user = await User.create(req.body);
+        // return res.status(StatusCodes.CREATED).json({message:"Usuário criado!"});
         return res.status(StatusCodes.CREATED).json(user);
     }
     catch (error) {
