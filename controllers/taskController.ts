@@ -4,6 +4,7 @@ import { NotFoundError } from '../errors/customErrors.js';
 import Task, { ITask } from '../models/TaskModel.js'
 import { TaskRequest } from '../middleware/taskValidationMiddleware.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
+import { UserRequest } from '../middleware/authMiddleware.js';
 
 const getAllTasks = async (req:Request, res:Response) => {
     try {
@@ -14,7 +15,8 @@ const getAllTasks = async (req:Request, res:Response) => {
     }
 }
 
-const createTask = async (req:Request, res:Response) => {
+const createTask = async (req:UserRequest, res:Response) => {
+    console.log(req.user);
     try {
         const task = await Task.create(req.body)
         return res.status(StatusCodes.CREATED).json(task);
@@ -22,7 +24,6 @@ const createTask = async (req:Request, res:Response) => {
         console.log(error)
         return res.status(500).json({msg:"some kind of error"})
     }
-    
 }
 
 const getTask = async (req:TaskRequest, res:Response) => {
