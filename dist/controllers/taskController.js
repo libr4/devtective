@@ -12,6 +12,7 @@ const getAllTasks = async (req, res) => {
     }
 };
 const createTask = async (req, res) => {
+    console.log(req.user);
     try {
         const task = await Task.create(req.body);
         return res.status(StatusCodes.CREATED).json(task);

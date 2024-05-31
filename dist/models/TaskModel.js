@@ -20,10 +20,19 @@ const TaskSchema = new mongoose.Schema({
         enum: TASK_TYPES,
         required: true
     },
-    assignedTo: mongoose.Schema.ObjectId, // Refrence to the User
-    createdBy: mongoose.Schema.ObjectId, // Refeence to the User
-    createdAt: Date,
-    updatedAt: Date,
+    fromProject: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Project",
+    },
+    assignedTo: {
+        type: mongoose.Schema.Types.ObjectId, // Refrence to the User
+        ref: "User",
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId, // Refrence to the User
+        ref: "User",
+        // required:true,
+    },
 }, { timestamps: true });
 TaskSchema.pre('save', async function (next) {
     if (this.isNew) {

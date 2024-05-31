@@ -9,8 +9,11 @@ import userRouter from './routes/userRouter.js';
 import authRouter from './routes/authRouter.js';
 import errorHandlerMiddleware from './middleware/errorHandlerMiddleware.js';
 import projectRouter from './routes/projectRouter.js';
+import cookieParser from 'cookie-parser';
+import { authenticateUser } from './middleware/authMiddleware.js';
 const app = express();
 // app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.json());
 if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'));
@@ -18,7 +21,7 @@ if (process.env.NODE_ENV === "development") {
 app.get('/api/hello', (req, res) => {
     return res.status(200).json('Hello, world!');
 });
-app.use('/api/v1/tasks', taskRouter);
+app.use('/api/v1/tasks', authenticateUser, taskRouter);
 app.use('/api/v1/projects', projectRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/auth', authRouter);

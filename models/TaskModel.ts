@@ -6,13 +6,14 @@ import { TASK_PRIORITIES, TASK_STATUS, TASK_TYPES } from '../utils/constants.js'
 // type StatusType = "Open" | "In progress" | "Completed" 
 
 
-export interface ITask {
+export interface ITask extends Document {
   taskId: Number;
   title: string;
   description: string;
   status: TASK_STATUS; // e.g., "open", "in progress", "completed"
   priority:TASK_PRIORITIES;
   type:TASK_TYPES;
+  fromProject:mongoose.Types.ObjectId;
   assignedTo: mongoose.Types.ObjectId; // Reference to the User
   createdBy: mongoose.Types.ObjectId; // Reference to the User
   createdAt: Date;
@@ -39,10 +40,19 @@ const TaskSchema = new mongoose.Schema<ITask>({
     enum: TASK_TYPES,
     required: true
   },
-  assignedTo: mongoose.Schema.ObjectId, // Refrence to the User
-  createdBy: mongoose.Schema.ObjectId,// Refeence to the User
-  createdAt: Date,
-  updatedAt: Date,   
+  fromProject: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"Project",
+  },
+  assignedTo: {
+    type:mongoose.Schema.Types.ObjectId, // Refrence to the User
+    ref:"User",
+  },
+  createdBy: {
+    type:mongoose.Schema.Types.ObjectId, // Refrence to the User
+    ref:"User",
+    // required:true,
+  },
 },
   {timestamps:true}
 )
