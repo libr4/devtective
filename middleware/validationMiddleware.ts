@@ -10,7 +10,7 @@ import UserModel from "../models/UserModel.js";
 const MAX_DESCRIPTION:number = 3000;
 const MAX_TITLE:number = 100;
 
-const handleValidationErrors = (validationRules:ValidationChain[]) => {
+export const handleValidationErrors = (validationRules:ValidationChain[]) => {
     return [
         ...validationRules,
         (req:Request, res:Response, next:NextFunction) => {

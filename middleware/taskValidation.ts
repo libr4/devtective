@@ -127,9 +127,12 @@ export interface TaskRequest extends Request {
     task?: ITask;
 }
 
+/** verifica se o id da tarefa está presente e se é um id de tarefa existente.
+Por fim, inclui a task na request para possível manipulação nos próximos middleware
+ou controladores */
 export const validateIdParam = async (req:TaskRequest, res:Response, next:NextFunction) => {
     const {taskId} = req.params;
-    console.log(typeof taskId)
+    console.log("req.params", req.params)
     try {
         if (!taskId) throw new ValidationError(['O id da tarefa é obrigatório!']);
         let task =  await Task.findOne({taskId});

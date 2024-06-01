@@ -10,7 +10,9 @@ import {
     updateTask,
     deleteTask
 } from '../controllers/taskController.js'
-import { validateIdParam, validateTaskData } from '../middleware/taskValidationMiddleware.js';
+import { validateIdParam, validateTaskData } from '../middleware/taskValidation.js';
+
+// router.use('/projects/:projectId/tasks')
 
 router.route('/')
     .get(getAllTasks)

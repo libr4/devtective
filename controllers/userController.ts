@@ -2,8 +2,9 @@ import {Request, Response} from 'express'
 import { StatusCodes } from 'http-status-codes';
 import { NotFoundError } from '../errors/customErrors.js';
 import Task, { ITask } from '../models/TaskModel.js'
-import User, {IUser} from '../models/UserModel.js';
-import { TaskRequest } from '../middleware/taskValidationMiddleware.js';
+import User from '../models/UserModel.js';
+import { IUser } from '../types/user.js';
+import { TaskRequest } from '../middleware/taskValidation.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
 import bcrypt from 'bcryptjs'
 

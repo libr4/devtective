@@ -14,6 +14,7 @@ export interface ITask extends Document {
   priority:TASK_PRIORITIES;
   type:TASK_TYPES;
   fromProject:mongoose.Types.ObjectId;
+  technology:string;
   assignedTo: mongoose.Types.ObjectId; // Reference to the User
   createdBy: mongoose.Types.ObjectId; // Reference to the User
   createdAt: Date;
@@ -34,6 +35,10 @@ const TaskSchema = new mongoose.Schema<ITask>({
     type: String, 
     enum: TASK_PRIORITIES, // Enforce enum values
     default: TASK_PRIORITIES.Medium 
+  },
+  technology: {
+    type:String,
+    default:"",
   },
   type: {
     type:String,

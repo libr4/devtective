@@ -12,6 +12,7 @@ import errorHandlerMiddleware from './middleware/errorHandlerMiddleware.js';
 import projectRouter from './routes/projectRouter.js';
 import cookieParser from 'cookie-parser';
 import { authenticateUser } from './middleware/authMiddleware.js';
+import { validateProjectIdParam } from './middleware/projectValidation.js';
 const app = express();
 
 // app.use(express.urlencoded({ extended: true }));
@@ -22,10 +23,10 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'))
 }
 app.get('/api/hello', (req:Request, res:Response) => {
-    return res.status(200).json('Hello, world!')
+    return res.status(200).json({text:'Hello!'})
 })
-app.use('/api/v1/tasks', authenticateUser, taskRouter)
-app.use('/api/v1/projects', projectRouter)
+app.use('/api/v1/projects', authenticateUser, projectRouter)
+app.use('/api/v1/projects/:projectId/tasks', validateProjectIdParam, authenticateUser, taskRouter)
 app.use('/api/v1/users',  userRouter)
 app.use('/api/v1/auth', authRouter)
 
@@ -37,9 +38,11 @@ app.use(errorHandlerMiddleware)
 
 // try {
 mongoose.connect(process.env.MONGO_URL as string).then(() => {
-    app.listen(process.env.PORT || 5000, () => {
-        console.log("Server started running...")
-    })
+    if (process.env.NODE_ENV !== "test") {
+        app.listen(process.env.PORT || 5000, () => {
+            // console.log("Server started running...")
+        })
+    }
 })
 .catch((error:unknown) => {
     console.log(error);

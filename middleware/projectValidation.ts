@@ -1,0 +1,42 @@
+import { NextFunction, Response } from "express";
+import { ProjectRequest } from "../types/project";
+import { handleValidationErrors } from "./validationMiddleware.js";
+import { ValidationError } from "../errors/customErrors.js";
+import ProjectModel from "../models/ProjectModel.js";
+import { handleError } from "./errorHandlerMiddleware.js";
+import { body, param } from "express-validator";
+import mongoose from "mongoose";
+
+export const validateProjectIdParam = async (req:ProjectRequest, res:Response, next:NextFunction) => {
+    const {projectId} = req.params;
+    console.log("projectId", projectId)
+    try {
+        let project =  await ProjectModel.findById(projectId);
+        if(!project) {
+            throw new ValidationError(["Erro ao encontrar projeto!"])
+        }
+        req.project = project
+    } catch (error:any) {
+        return handleError(res, error);
+    }
+    return next();
+}
+
+const MAX_DESCRIPTION = 3000;
+export const validateProjectInput = handleValidationErrors([
+    param('projectId')
+        .notEmpty().withMessage('O projeto deve ser informado')
+        .custom(async (projectId) => {
+            const project = await ProjectModel.findById(projectId);
+            if (!project) {
+                console.log("projeto não encontrado")
+                // throw new Error('projeto não encontrado!!')
+            }
+
+            return project;
+        }).withMessage("Projeto não encontrado"),
+    body('name')
+        .notEmpty().withMessage('O nome do projeto é obrigatório'),
+    body('description')
+        .isLength({max:MAX_DESCRIPTION}).withMessage(`A descrição deve ter no máximo ${MAX_DESCRIPTION} caracteres`),    
+])

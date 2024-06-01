@@ -23,3 +23,4 @@ export const verifyJWT = (token:string) => {
     const user = jwt.verify(token, process.env.JWT_SECRET as string);
     return user;
 }
+
