@@ -2,22 +2,26 @@ import {Request, Response} from 'express'
 import { StatusCodes } from 'http-status-codes';
 import { NotFoundError, UnauthenticatedError } from '../errors/customErrors.js';
 import Task, { ITask } from '../models/TaskModel.js'
-import User, {IUser} from '../models/UserModel.js';
-import { TaskRequest } from '../middleware/taskValidationMiddleware.js';
+import User from '../models/UserModel.js';
+import { IUser } from '../types/user.js';
+import { TaskRequest } from '../middleware/taskValidation.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
 import bcrypt from 'bcryptjs'
 import { comparePassword, createJWT } from '../utils/authUtils.js';
+import { UserRequest } from '../types/user.js';
 
-const login = async (req:Request, res:Response) => {
+const login = async (req:UserRequest, res:Response) => {
     try {
+        console.log("usercontroller", req.user)
         const user = await User.findOne({username:req.body.username});
         const isValidUser = user && await comparePassword(req.body.password, user.password);
         if (!isValidUser) {
             throw new UnauthenticatedError("Credenciais inválidas")
         }
+        const _id = user._id;
         const token = createJWT({
-            _id:user._id,
-             role:user.role
+            _id,
+            role:user.role
         })
         const oneDay = 60 * 60 * 60 * 24;
         const isProduction = process.env.NODE_ENV === "production";

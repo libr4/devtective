@@ -10,10 +10,10 @@ import {
     updateTask,
     deleteTask
 } from '../controllers/taskController.js'
-import { validateIdParam, validateTaskData } from '../middleware/taskValidationMiddleware.js';
+import { validateIdParam, validateTaskData } from '../middleware/taskValidation.js';
 import { validateLoginInput, validateRegisterInput } from '../middleware/validationMiddleware.js';
 import { createUser } from '../controllers/userController.js';
-import { login } from '../controllers/authController .js';
+import { login } from '../controllers/authController.js';
 
 authRouter.route('/register')
     .post(validateRegisterInput,createUser);

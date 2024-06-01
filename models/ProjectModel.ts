@@ -1,16 +1,5 @@
 import mongoose from 'mongoose';
-
-export interface IProject {
-  name: string;
-  description: string;
-  status: string;
-  members:mongoose.Types.ObjectId[];
-  url: string;
-  owner: mongoose.Types.ObjectId;
-  leader:mongoose.Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { IProject } from '../types/project';
 
 const ProjectSchema = new mongoose.Schema<IProject>({
   name:{
@@ -27,10 +16,10 @@ const ProjectSchema = new mongoose.Schema<IProject>({
     ref: "User",
   }],
   url: String,
-  owner:[{
+  createdBy:{
     type:mongoose.Schema.Types.ObjectId,
     ref: "User",
-  }],
+  },
   leader:[{
     type:mongoose.Schema.Types.ObjectId,
     ref: "User",

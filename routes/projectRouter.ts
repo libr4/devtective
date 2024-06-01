@@ -9,17 +9,19 @@ import {
     updateTask,
     deleteTask
 } from '../controllers/taskController.js'
-import { validateIdParam, validateTaskData } from '../middleware/taskValidationMiddleware.js';
-import { createProject, getAllProjects } from '../controllers/projectController.js';
+import { validateIdParam, validateTaskData } from '../middleware/taskValidation.js';
+import { createProject, deleteProject, getAllProjects, updateProject } from '../controllers/projectController.js';
+import { authenticateUser } from '../middleware/authMiddleware.js';
+import { validateProjectIdParam } from '../middleware/projectValidation.js';
 
 projectRouter.route('/')
     .get(getAllProjects)
     .post(createProject);
     // .post(validateTaskData, createTask);
 
-projectRouter.route('/:taskId')
-    .get(validateIdParam, getTask)
-    .patch(validateIdParam, updateTask)
-    .delete(validateIdParam, deleteTask);
+projectRouter.route('/:projectId')
+    // .get(validateIdParam, getTask)
+    .patch(validateProjectIdParam, updateProject)
+    .delete(validateProjectIdParam, deleteProject);
 
 export default projectRouter

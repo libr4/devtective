@@ -10,7 +10,7 @@ import {
     updateTask,
     deleteTask
 } from '../controllers/taskController.js'
-import { validateIdParam, validateRegisterData, validateTaskData } from '../middleware/taskValidationMiddleware.js';
+import { validateIdParam, validateRegisterData, validateTaskData } from '../middleware/taskValidation.js';
 import { createUser } from '../controllers/userController.js';
 import { body, validationResult } from 'express-validator';
 import { validateRegisterInput } from '../middleware/validationMiddleware.js';

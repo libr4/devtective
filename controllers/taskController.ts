@@ -2,13 +2,16 @@ import {Request, Response} from 'express'
 import { StatusCodes } from 'http-status-codes';
 import { NotFoundError } from '../errors/customErrors.js';
 import Task, { ITask } from '../models/TaskModel.js'
-import { TaskRequest } from '../middleware/taskValidationMiddleware.js';
+import { TaskRequest } from '../middleware/taskValidation.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
-import { UserRequest } from '../middleware/authMiddleware.js';
+import { UserRequest } from '../types/user.js';
 
 const getAllTasks = async (req:Request, res:Response) => {
     try {
-        const allTasks = await Task.find({});
+        // const projectId = req.params.projectId;
+        const projectId = req.body.project._id;
+        console.log("projectId", projectId);
+        const allTasks = await Task.find({fromProject:projectId});
         return res.status(StatusCodes.OK).json(allTasks)
     } catch (error) {
         handleError(res, error);
@@ -18,6 +21,12 @@ const getAllTasks = async (req:Request, res:Response) => {
 const createTask = async (req:UserRequest, res:Response) => {
     console.log(req.user);
     try {
+        const fromProject = req.params.projectId;
+        console.log("projectId", fromProject)
+        if (!req.body.fromProject) {
+            req.body.fromProject = fromProject;
+        }
+        console.log("req.body.fromProject", req.body.fromProject);
         const task = await Task.create(req.body)
         return res.status(StatusCodes.CREATED).json(task);
     } catch (error) {
@@ -27,6 +36,7 @@ const createTask = async (req:UserRequest, res:Response) => {
 }
 
 const getTask = async (req:TaskRequest, res:Response) => {
+    console.log(req.params)
     const task = req.task;
     return res.status(StatusCodes.OK).json(task);
 }
