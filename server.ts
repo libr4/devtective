@@ -38,11 +38,11 @@ app.use(errorHandlerMiddleware)
 
 // try {
 mongoose.connect(process.env.MONGO_URL as string).then(() => {
-    // if (process.env.NODE_ENV !== "test") {
+    if (process.env.NODE_ENV !== "test") {
         app.listen(process.env.PORT || 5000, () => {
             // console.log("Server started running...")
         })
-    // }
+    }
 })
 .catch((error:unknown) => {
     console.log(error);
