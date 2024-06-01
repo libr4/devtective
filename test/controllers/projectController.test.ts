@@ -1,6 +1,5 @@
 import request from 'supertest';
 import app from "../../server"
-import { Server } from "socket.io";
 import { Response } from 'express';
 import ProjectModel from '../../models/ProjectModel';
 import UserModel from '../../models/UserModel';
@@ -8,7 +7,6 @@ import { IUser } from '../../types/user';
 import mongoose, { Mongoose, ObjectId } from 'mongoose';
 import { IProject } from '../../types/project';
 
-let server:Server;
 let tokenCookie:string;
 const credentials = {
     username:"UsuarioHasheado2",
