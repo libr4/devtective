@@ -5,7 +5,17 @@ import './App.css'
 import React from 'react'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  fetch('/api/hello')
+  .then((res) => {
+    console.log(res); // Log the response object
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+    return res.json();
+  })
+  .then((data) => console.log(data))
+  .catch((err) => console.error('Error:', err));
 
   return (
     <>

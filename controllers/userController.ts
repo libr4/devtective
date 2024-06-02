@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { NotFoundError } from '../errors/customErrors.js';
 import Task, { ITask } from '../models/TaskModel.js'
 import User from '../models/UserModel.js';
-import { IUser } from '../types/user.js';
+import { IUser, UserRequest } from '../types/user.js';
 import { TaskRequest } from '../middleware/taskValidation.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
 import bcrypt from 'bcryptjs'
@@ -35,6 +35,12 @@ const createUser = async (req:Request, res:Response) => {
     
 }
 
+export const getCurrentUser= async (req:UserRequest, res:Response) => {
+    const user = await User.findById(req.user?._id) as IUser;
+    const userObj = user.toObject();
+    delete userObj.password;
+    return res.status(StatusCodes.OK).json(userObj)
+}
 // const getTask = async (req:TaskRequest, res:Response) => {
 //     const task = req.task;
 //     return res.status(StatusCodes.OK).json(task);

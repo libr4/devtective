@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'))
 }
 app.get('/api/hello', (req:Request, res:Response) => {
-    return res.status(200).json({text:'Hello!'})
+    return res.json({text:'Hello!'})
 })
 app.use('/api/v1/projects', authenticateUser, projectRouter)
 app.use('/api/v1/projects/:projectId/tasks', validateProjectIdParam, authenticateUser, taskRouter)
