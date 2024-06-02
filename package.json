@@ -6,7 +6,7 @@
   "scripts": {
     "setup-project": "npm i && cd client && npm i",
     "dev": "nodemon",
-    "test": "jest --runInBand"
+    "test": "jest"
   },
   "type": "module",
   "keywords": [],
