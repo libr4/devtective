@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import TaskCounter from './TaskCounterModel.js';
 import { nanoid } from 'nanoid';
 import { TASK_PRIORITIES, TASK_STATUS, TASK_TYPES } from '../utils/constants.js';
@@ -7,6 +7,7 @@ import { TASK_PRIORITIES, TASK_STATUS, TASK_TYPES } from '../utils/constants.js'
 
 
 export interface ITask extends Document {
+  _id:mongoose.Types.ObjectId,
   taskId: Number;
   title: string;
   description: string;
@@ -48,6 +49,8 @@ const TaskSchema = new mongoose.Schema<ITask>({
   fromProject: {
     type: mongoose.Schema.Types.ObjectId,
     ref:"Project",
+    unique:true,
+
   },
   assignedTo: {
     type:mongoose.Schema.Types.ObjectId, // Refrence to the User
@@ -65,11 +68,10 @@ const TaskSchema = new mongoose.Schema<ITask>({
 TaskSchema.pre('save', async function(next) {
   if (this.isNew) {
     try {
-      const counter = await TaskCounter.findByIdAndUpdate(
-        { _id: 'taskId' },
-        // { fromProject: this.fromProject },
+      const counter = await TaskCounter.findOneAndUpdate(
+        { fromProject: this.fromProject },
         { $inc: { seq: 1 } },
-        { new: true, upsert: true }
+        { new: true, upsert: true, setDefaultsOnInsert: true }
       );
       this.taskId = counter.seq;
       next();

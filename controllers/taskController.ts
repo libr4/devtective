@@ -5,11 +5,12 @@ import Task, { ITask } from '../models/TaskModel.js'
 import { TaskRequest } from '../middleware/taskValidation.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
 import { UserRequest } from '../types/user.js';
+import { ProjectRequest } from '../types/project.js';
 
-const getAllTasks = async (req:Request, res:Response) => {
+const getAllTasks = async (req:ProjectRequest, res:Response) => {
     try {
         // const projectId = req.params.projectId;
-        const projectId = req.body.project._id;
+        const projectId = req.project?._id;
         console.log("projectId", projectId);
         const allTasks = await Task.find({fromProject:projectId});
         return res.status(StatusCodes.OK).json(allTasks)
@@ -47,14 +48,13 @@ const updateTask = async (req:TaskRequest, res:Response) => {
     try {
         const task = req.task as ITask;
         const taskId = task.taskId;
+        const fromProject = req.project?._id;
         console.log("task:", task);
-        let updatedTask:ITask = await Task.findOneAndUpdate({taskId}, taskChanges, {new:true}) as ITask;
+        let updatedTask:ITask = await Task.findOneAndUpdate({fromProject, taskId}, taskChanges, {new:true}) as ITask;
         if (!updatedTask) throw new NotFoundError(['Tarefa não encontrada!']);
-        return res.status(StatusCodes.OK).json({source:"updateTask", updatedTask});
-    } catch (error) {
+        return res.status(StatusCodes.OK).json(updatedTask);
+    } catch (error:any) {
         return handleError(res, error);
-        // console.log(error);
-        // return res.status(StatusCodes.NOT_FOUND).json({msg:"Erro ao atualizar tarefa"})
     }
 }
 
