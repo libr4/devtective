@@ -1,4 +1,4 @@
-import {Request, Response} from 'express'
+import {NextFunction, Request, Response} from 'express'
 import { StatusCodes } from 'http-status-codes';
 import { NotFoundError, UnauthenticatedError } from '../errors/customErrors.js';
 import Task, { ITask } from '../models/TaskModel.js'
@@ -14,6 +14,7 @@ const login = async (req:UserRequest, res:Response) => {
     try {
         console.log("usercontroller", req.user)
         const user = await User.findOne({username:req.body.username});
+        console.log("login user credtaef", user)
         const isValidUser = user && await comparePassword(req.body.password, user.password);
         if (!isValidUser) {
             throw new UnauthenticatedError("Credenciais inválidas")
@@ -34,6 +35,15 @@ const login = async (req:UserRequest, res:Response) => {
     } catch (error) {
         handleError(res, error);
     }
+}
+
+export const logout = (req:Request, res:Response, next:NextFunction) => {
+    res.cookie('token', 'logout', {
+        httpOnly:true,
+        expires: new Date(Date.now())
+    })
+    res.status(StatusCodes.OK).json({message:'Usuário deslogado'})
+
 }
 // const getTask = async (req:TaskRequest, res:Response) => {
 //     const task = req.task;

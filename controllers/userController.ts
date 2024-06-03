@@ -3,10 +3,12 @@ import { StatusCodes } from 'http-status-codes';
 import { NotFoundError } from '../errors/customErrors.js';
 import Task, { ITask } from '../models/TaskModel.js'
 import User from '../models/UserModel.js';
-import { IUser } from '../types/user.js';
+import { IUser, UserRequest } from '../types/user.js';
 import { TaskRequest } from '../middleware/taskValidation.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
 import bcrypt from 'bcryptjs'
+import UserModel from '../models/UserModel.js';
+
 
 const getAllUsers= async (req:Request, res:Response) => {
     try {
@@ -17,6 +19,7 @@ const getAllUsers= async (req:Request, res:Response) => {
     }
 }
 
+ 
 const createUser = async (req:Request, res:Response) => {
     try {
         const isFirstUser = await User.countDocuments() === 0;
@@ -32,14 +35,33 @@ const createUser = async (req:Request, res:Response) => {
     } catch (error) {
         handleError(res, error);
     }
-    
+}
+
+export const getCurrentUser = async (req:UserRequest, res:Response) => {
+    const user = await User.findById(req.user?._id) as IUser;
+    const userObj = user.toObject();
+    delete userObj.password;
+    return res.status(StatusCodes.OK).json(userObj)
+}
+
+
+/**Atualiza informações do usuário
+ * espera o id do usuario no corpo da request
+ * assim como as informações para mudança
+ * 
+ */
+export const updateUser = async (req:UserRequest, res:Response) => {
+    const newUser = req.body;
+    console.log("UPDATE USER REQ USER", req.user)
+    const updatedUser = await UserModel.findByIdAndUpdate(req.user?._id, newUser, {new:true})
+    console.log("USUARIO ATALIZADO", updatedUser)
+    return res.status(StatusCodes.OK).json(updatedUser)
 }
 
 // const getTask = async (req:TaskRequest, res:Response) => {
 //     const task = req.task;
 //     return res.status(StatusCodes.OK).json(task);
 // }
-
 
 // const updateTask = async (req:TaskRequest, res:Response) => {
 //     const taskChanges = req.body;
@@ -57,19 +79,17 @@ const createUser = async (req:Request, res:Response) => {
 //     }
 // }
 
-const deleteUser = async (req:TaskRequest, res:Response) => {
+const deleteUser = async (req:UserRequest, res:Response) => {
     try {
-        const id = req.params.id;
-        const removedUser = await Task.findByIdAndDelete(id) as IUser;
+        const userId = req.params.userId;
+        const removedUser = await Task.findByIdAndDelete(userId) as IUser;
         if(!removedUser) {
-            throw new NotFoundError(['Tarefa não encontrada!']);
+            throw new NotFoundError(['Usuário não encontrado!']);
         }
         return res.status(StatusCodes.OK).json({removedUser, msg:"Usuário deletado com sucesso"})
         
     } catch (error) {
         handleError(res, error);
-        // console.log(error);
-        // return res.status(500).json({msg:"Erro ao deletar tarefa", error})
     }
 }
 

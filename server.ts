@@ -11,7 +11,7 @@ import authRouter from './routes/authRouter.js'
 import errorHandlerMiddleware from './middleware/errorHandlerMiddleware.js';
 import projectRouter from './routes/projectRouter.js';
 import cookieParser from 'cookie-parser';
-import { authenticateUser } from './middleware/authMiddleware.js';
+import { authenticateUser, validateJWT } from './middleware/authMiddleware.js';
 import { validateProjectIdParam } from './middleware/projectValidation.js';
 const app = express();
 
@@ -23,10 +23,10 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'))
 }
 app.get('/api/hello', (req:Request, res:Response) => {
-    return res.status(200).json({text:'Hello!'})
+    return res.json({text:'Hello!'})
 })
-app.use('/api/v1/projects', authenticateUser, projectRouter)
-app.use('/api/v1/projects/:projectId/tasks', validateProjectIdParam, authenticateUser, taskRouter)
+app.use('/api/v1/projects', validateJWT, authenticateUser, projectRouter)
+app.use('/api/v1/projects/:projectId/tasks', validateProjectIdParam, validateJWT, authenticateUser, taskRouter)
 app.use('/api/v1/users',  userRouter)
 app.use('/api/v1/auth', authRouter)
 

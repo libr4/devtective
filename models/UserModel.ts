@@ -4,15 +4,26 @@ import { IUser } from '../types/user.js';
 
 const UserSchema = new mongoose.Schema<IUser>({
     
-    username: String,
-    email: String,
-    password: String, // Hashed password
+    username: {
+        type:String,
+        required:true,
+    },
+    email: {
+        type:String,
+        required:true,
+    },
+    password: {
+        type:String,
+        required:true,
+    }, // Hashed password
     role: {
         type:String,
         enum:USER_ROLES,
         default:USER_ROLES.Not_Specified
     }, // e.g., "admin", "developer", "manager"
-    firstName: String,
+    firstName: {
+        type:String,
+    },
     lastName: String,
     // profilePictureUrl: String, // URL to the user's profile picture
     status: String, // e.g., "active", "inactive", "banned"

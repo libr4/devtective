@@ -67,6 +67,7 @@ TaskSchema.pre('save', async function(next) {
     try {
       const counter = await TaskCounter.findByIdAndUpdate(
         { _id: 'taskId' },
+        // { fromProject: this.fromProject },
         { $inc: { seq: 1 } },
         { new: true, upsert: true }
       );
