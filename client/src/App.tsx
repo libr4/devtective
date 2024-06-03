@@ -1,21 +1,13 @@
 import { useState } from 'react'
+// const reactLogo = require('react.svg')
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import React from 'react'
+import axios from 'axios'
 
 function App() {
   const [count, setCount] = useState(0);
-  fetch('/api/hello')
-  .then((res) => {
-    console.log(res); // Log the response object
-    if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
-    }
-    return res.json();
-  })
-  .then((data) => console.log(data))
-  .catch((err) => console.error('Error:', err));
 
   return (
     <>

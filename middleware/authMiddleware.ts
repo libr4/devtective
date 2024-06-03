@@ -1,18 +1,23 @@
 import { NextFunction, Request, Response } from "express";
-import { UnauthenticatedError, UnauthorizedError } from "../errors/customErrors.js";
+import { UnauthenticatedError, UnauthorizedError, ValidationError } from "../errors/customErrors.js";
 import { handleError } from "./errorHandlerMiddleware.js";
 import { verifyJWT } from "../utils/authUtils.js";
 // import { IUser } from "../models/UserModel.js";
 import { IUser } from "../types/user.js";
 import { UserRequest } from "../types/user.js";
 
-
-/**Verifica se o token está presente na request e verifica se ele é válido */
-export const authenticateUser = (req:UserRequest, res:Response, next:NextFunction) => {
-    const unAuthError = new UnauthenticatedError("Autenticação inválida");
+export const validateJWT = (req:UserRequest, res:Response, next:NextFunction) => {
+    const validationError = new ValidationError(["Usuário não logado!"]);
+    console.log("VALIDATEJWT", req.cookies?.token)
     if (!req.cookies?.token) {
-        handleError(res, unAuthError);
+        return handleError(res, validationError);
     }
+    next();
+}
+
+/**Verifica se o token é válido */
+export const authenticateUser = (req:UserRequest, res:Response, next:NextFunction) => {
+    const unAuthError = new UnauthenticatedError("Autenticação inválida!");
     const token = req.cookies?.token as string;
     try {
         const {_id, role} = verifyJWT(token) as IUser;
@@ -24,7 +29,6 @@ export const authenticateUser = (req:UserRequest, res:Response, next:NextFunctio
     } catch (error) {
         handleError(res, unAuthError);
     }
-    // next();
 }
 
 export const authorizeAccess = (...roles:string[]) => {

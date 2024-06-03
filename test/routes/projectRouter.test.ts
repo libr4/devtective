@@ -1,17 +1,23 @@
 import request from 'supertest';
 import app from "../../server"
-import { Response } from 'express';
 import ProjectModel from '../../models/ProjectModel';
 import UserModel from '../../models/UserModel';
 import { IUser } from '../../types/user';
 import mongoose, { Mongoose, ObjectId } from 'mongoose';
 import { IProject } from '../../types/project';
+import bcrypt from 'bcryptjs'
+import { generateCredentials } from '../../utils/testUtils';
 
 let tokenCookie:string;
-const credentials = {
-    username:"UsuarioHasheado2",
-    password:"Thisismypassword"
-}
+// const credentials = {
+//     username:"usuario_teste1",
+//     password:"password",
+//     email:"teste1@teste.com",
+//     firstName:"Teste"
+// }
+
+const credentials = generateCredentials();
+
 let DBConnection;
 let user:IUser;
 let testDeleteProject:IProject;
@@ -19,10 +25,24 @@ beforeAll(async () => {
     // jest.setTimeout(30000); // 30 seconds
     DBConnection = await mongoose.connect(process.env.MONGO_URL as string)
     // server = app.listen(3000) as unknown as Server
+    // user = await UserModel.create(credentials) as IUser;
+    // const registerResponse = await request(app).post('/api/v1/auth/register')
+    //     .send(credentials)
+
+    //Cria o usuário para teste
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(credentials.password, salt);
+
+    user = await UserModel.create({...credentials, password:hashedPassword})
+    console.log("user", user)
+
     const loginResponse = await request(app).post('/api/v1/auth/login')
         .send(credentials)
-    user = await UserModel.findOne({username:credentials.username}) as IUser;
+        console.log("loginresponse", loginResponse.body)
     tokenCookie = loginResponse.headers['set-cookie']; // Extract cookie from login response
+    
+
+    //Cria no BD projetos para teste
     const testProject1 = await ProjectModel
         .create({ name: 'Project 1', createdBy:user._id, members:[user._id] });
     testDeleteProject = await ProjectModel
@@ -30,8 +50,10 @@ beforeAll(async () => {
     const testProject3 = await ProjectModel
         .create({ name: 'Test Project', createdBy: user._id, members:[user._id]});
 })
+
 afterAll(async () => {
     await ProjectModel.deleteMany({createdBy:user._id})
+    await UserModel.findByIdAndDelete(user._id)
 })
 
 
@@ -39,14 +61,6 @@ afterAll(async () => {
 // interface TestResponse extends Response {
 //     msg:string
 // }
-
-describe("Testing test", () => {
-    it("should return Hello!", async () => {
-        const response = await request(app).get('/api/hello');
-        const parsedRes = JSON.parse(response.text);
-        expect(parsedRes.text).toBe('Hello!')
-    })
-})
 
 describe("PROJECT API", () => {
     it("should return every project a user is related to", async () => {

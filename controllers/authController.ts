@@ -14,6 +14,7 @@ const login = async (req:UserRequest, res:Response) => {
     try {
         console.log("usercontroller", req.user)
         const user = await User.findOne({username:req.body.username});
+        console.log("login user credtaef", user)
         const isValidUser = user && await comparePassword(req.body.password, user.password);
         if (!isValidUser) {
             throw new UnauthenticatedError("Credenciais inválidas")
