@@ -3,7 +3,7 @@ import { UserRequest } from "../types/user";
 import UserModel from "../models/UserModel.js";
 import { ValidationError } from "../errors/customErrors.js";
 import { handleError } from "./errorHandlerMiddleware.js";
-import { USER_ROLES } from "../utils/constants";
+import { USER_ROLES } from "../utils/constants.js";
 
 export const validateUserIdParam = async (req:UserRequest, res:Response, next:NextFunction) => {
     const {userId} = req.params;
