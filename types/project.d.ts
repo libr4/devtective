@@ -2,6 +2,7 @@ import { Request } from "express";
 import { Document } from "mongoose";
 
 export interface IProject extends Document {
+    _id:mongoose.Types.ObjectId,
     name: string;
     description: string;
     status: string;

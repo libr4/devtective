@@ -7,17 +7,22 @@ import { handleError } from "./errorHandlerMiddleware.js";
 import { body, param } from "express-validator";
 import mongoose from "mongoose";
 
+/**Verifica se o id do projeto está presente na rota, se sim, procura o projeto no BD
+ * e o coloca na requisição para o uso de próximos middleware ou controladores.
+ * Caso haja algum problema com o id do projeto, retorna 'Projeto não identificado ou não existe'
+ */
 export const validateProjectIdParam = async (req:ProjectRequest, res:Response, next:NextFunction) => {
     const {projectId} = req.params;
-    console.log("projectId", projectId)
+    console.log("projectid: ", projectId)
+    const validationError = new ValidationError(["Projeto não identificado ou não existe!"])
     try {
         let project =  await ProjectModel.findById(projectId);
         if(!project) {
-            throw new ValidationError(["Erro ao encontrar projeto!"])
+            throw validationError;
         }
         req.project = project
     } catch (error:any) {
-        return handleError(res, error);
+        return handleError(res, validationError);
     }
     return next();
 }

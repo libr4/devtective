@@ -22,8 +22,5 @@ authRouter.route('/login')
     .post(validateLoginInput, login)
 authRouter.route('/logout')
     .get(logout);
-    // .get(validateIdParam, getTask)
-    // .patch(validateIdParam, updateTask)
-    // .delete(validateIdParam, deleteTask);
 
 export default authRouter

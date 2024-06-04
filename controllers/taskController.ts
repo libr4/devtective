@@ -5,12 +5,13 @@ import Task, { ITask } from '../models/TaskModel.js'
 import { TaskRequest } from '../middleware/taskValidation.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
 import { UserRequest } from '../types/user.js';
+import { ProjectRequest } from '../types/project.js';
 
-const getAllTasks = async (req:Request, res:Response) => {
+/**Retorna todas as tarefas referentes a um projeto, desde que o usuário esteja logado */
+const getAllTasks = async (req:ProjectRequest, res:Response) => {
     try {
-        // const projectId = req.params.projectId;
-        const projectId = req.body.project._id;
-        console.log("projectId", projectId);
+        // Se o projeto não estivesse presente, esse código não chegaria a ser executado
+        const projectId = req.project?._id;
         const allTasks = await Task.find({fromProject:projectId});
         return res.status(StatusCodes.OK).json(allTasks)
     } catch (error) {
@@ -19,24 +20,20 @@ const getAllTasks = async (req:Request, res:Response) => {
 }
 
 const createTask = async (req:UserRequest, res:Response) => {
-    console.log(req.user);
     try {
         const fromProject = req.params.projectId;
-        console.log("projectId", fromProject)
+        //se o projeto não for especificado, cadastra o projeto da url
         if (!req.body.fromProject) {
             req.body.fromProject = fromProject;
         }
-        console.log("req.body.fromProject", req.body.fromProject);
         const task = await Task.create(req.body)
         return res.status(StatusCodes.CREATED).json(task);
     } catch (error) {
-        console.log(error)
-        return res.status(500).json({msg:"some kind of error"})
+        handleError(res, error);
     }
 }
 
 const getTask = async (req:TaskRequest, res:Response) => {
-    console.log(req.params)
     const task = req.task;
     return res.status(StatusCodes.OK).json(task);
 }
@@ -47,21 +44,19 @@ const updateTask = async (req:TaskRequest, res:Response) => {
     try {
         const task = req.task as ITask;
         const taskId = task.taskId;
-        console.log("task:", task);
-        let updatedTask:ITask = await Task.findOneAndUpdate({taskId}, taskChanges, {new:true}) as ITask;
+        const fromProject = req.project?._id;
+        let updatedTask:ITask = await Task.findOneAndUpdate({fromProject, taskId}, taskChanges, {new:true}) as ITask;
         if (!updatedTask) throw new NotFoundError(['Tarefa não encontrada!']);
-        return res.status(StatusCodes.OK).json({source:"updateTask", updatedTask});
-    } catch (error) {
+        return res.status(StatusCodes.OK).json(updatedTask);
+    } catch (error:any) {
         return handleError(res, error);
-        // console.log(error);
-        // return res.status(StatusCodes.NOT_FOUND).json({msg:"Erro ao atualizar tarefa"})
     }
 }
 
 const deleteTask = async (req:TaskRequest, res:Response) => {
     try {
-        console.log("params", req.params.taskId);
-        const removedTask = await Task.findOneAndDelete({taskId:req.params.taskId}) as ITask;
+        const fromProject = req.project?._id;
+        const removedTask = await Task.findOneAndDelete({fromProject, taskId:req.params.taskId}) as ITask;
         if(!removedTask) {
             throw new NotFoundError(['Tarefa não encontrada!']);
         }
@@ -69,8 +64,6 @@ const deleteTask = async (req:TaskRequest, res:Response) => {
         
     } catch (error) {
         handleError(res, error);
-        // console.log(error);
-        // return res.status(500).json({msg:"Erro ao deletar tarefa", error})
     }
 }
 

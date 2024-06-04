@@ -5,6 +5,7 @@ import { BadRequestError, NotFoundError, ValidationError } from "../errors/custo
 import { TASK_PRIORITIES, TASK_STATUS, TASK_TYPES } from "../utils/constants.js";
 import { StatusCodes } from "http-status-codes";
 import { handleError } from "./errorHandlerMiddleware.js";
+import { IProject } from "../types/project.js";
 
 const MAX_DESCRIPTION:number = 3000;
 const MAX_TITLE:number = 100;
@@ -124,6 +125,7 @@ export const validateTaskData = (req:Request, res:Response, next:NextFunction) =
 }
 
 export interface TaskRequest extends Request {
+    project?: IProject;
     task?: ITask;
 }
 
@@ -134,8 +136,12 @@ export const validateIdParam = async (req:TaskRequest, res:Response, next:NextFu
     const {taskId} = req.params;
     console.log("req.params", req.params)
     try {
+        const projectId = req.project?._id;
+        if(!projectId) {
+            throw new ValidationError(["Erro ao encontrar tarefa!"])
+        }
         if (!taskId) throw new ValidationError(['O id da tarefa é obrigatório!']);
-        let task =  await Task.findOne({taskId});
+        let task =  await Task.findOne({taskId, fromProject:projectId});
         if(!task) {
             throw new ValidationError(["Erro ao encontrar tarefa!"])
         }
