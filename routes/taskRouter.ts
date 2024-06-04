@@ -16,11 +16,15 @@ import { validateIdParam, validateTaskData } from '../middleware/taskValidation.
 
 router.route('/')
     .get(getAllTasks)
-    .post(validateTaskData,createTask);
+    .post(validateTaskData,
+        createTask);
 
 router.route('/:taskId')
-    .get(validateIdParam, getTask)
-    .patch(validateIdParam, updateTask)
-    .delete(validateIdParam, deleteTask);
+    .get(validateIdParam, 
+        getTask)
+    .patch(validateIdParam, 
+        updateTask)
+    .delete(validateIdParam, 
+        deleteTask);
 
 export default router
