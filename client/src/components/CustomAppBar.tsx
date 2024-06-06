@@ -13,12 +13,14 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { PiDetectiveFill } from "react-icons/pi";
+import { GiSmokingPipe } from "react-icons/gi";
+// import '../App.css'
 
 export default function CustomAppBar() {
   const drawerWidth = 240;
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const pages = ['Products', 'Pricing', 'Blog'];
+  const pages = ['Tarefa', 'Histórico', 'Chat'];
   const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -37,13 +39,16 @@ export default function CustomAppBar() {
   };
   return (
     <div>
-      <AppBar position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-      >
+      {/* <AppBar 
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`}}
+  > */}
+  {/* <AppBar sx={{ width: '100%' }}> */}
+    <AppBar elevation={0} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, width:'100%' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
-          <PiDetectiveFill />
+          {/* <PiDetectiveFill /> */}
+          <GiSmokingPipe size={30} />
           <Typography
             variant="h6"
             noWrap
@@ -54,7 +59,9 @@ export default function CustomAppBar() {
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
-              letterSpacing: '.3rem',
+              pl:'0.5rem',
+              pr:'2rem',
+              // letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
             }}
@@ -62,7 +69,7 @@ export default function CustomAppBar() {
             DEVTECTIVE
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{  flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -161,6 +168,6 @@ export default function CustomAppBar() {
         </Toolbar>
       </Container> 
     </AppBar>
-</div>
+ </div>
   )
 }
