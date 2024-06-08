@@ -23,6 +23,10 @@ import CustomDrawer from './components/CustomDrawer';
 import Container from '@mui/material/Container';
 import Input from '@mui/material/Input';
 import SignIn from './pages/SignIn';
+import NewTask from './components/NewTask';
+import TaskExample from './components/TaskExample';
+import Header from './components/Header';
+import NewTaskPage from './pages/NewTaskPage';
 
 
 function App() {
@@ -32,20 +36,24 @@ function App() {
   return (
     <>
       <CssBaseline />
-    <Box>
+    {/* <Box> */}
       <Box sx={{ display: 'flex' }}>
       <CustomAppBar></CustomAppBar>
       {/* <Toolbar></Toolbar> */}
       <CustomDrawer></CustomDrawer>
+      {/* <Header></Header> */}
       {/* <Container maxWidth="xl" sx={{ mt: 20 }}> */}
-        <CollapsibleTable></CollapsibleTable>
+        {/* <CollapsibleTable></CollapsibleTable> */}
+        {/* <NewTask></NewTask> */}
+        <NewTaskPage></NewTaskPage>
+        {/* <TaskExample></TaskExample> */}
         {/* <Container>
         <Input sx={{marginTop:10}} />
         <Input sx={{marginTop:10}} />
         </Container> */}
       {/* </Container> */}
         {/* <ExampleTable></ExampleTable> */}
-    </Box>
+    {/* </Box> */}
     </Box>
     </>
   )

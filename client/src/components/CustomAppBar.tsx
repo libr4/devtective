@@ -14,6 +14,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { PiDetectiveFill } from "react-icons/pi";
 import { GiSmokingPipe } from "react-icons/gi";
+import { createTheme } from '@mui/material';
+import { ThemeProvider } from '@emotion/react';
 // import '../App.css'
 
 export default function CustomAppBar() {
@@ -37,13 +39,29 @@ export default function CustomAppBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+const primary = {
+  main: '#00796b',           // Main teal color
+  light: '#48a999',          // Lighter shade of the main color
+  dark: '#004c40',           // Darker shade of the main color
+  contrastText: '#ffffff'    // White text contrasts well with the main color
+};
+
+  const theme = createTheme({
+    palette: {
+      primary,
+      // secondary: purple,
+    },
+  });
+
   return (
     <div>
       {/* <AppBar 
         sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px`}}
   > */}
   {/* <AppBar sx={{ width: '100%' }}> */}
-    <AppBar elevation={0} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, width:'100%' }}>
+  <ThemeProvider theme={theme}>
+    <AppBar elevation={0} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, width:'100%'}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}
@@ -168,6 +186,7 @@ export default function CustomAppBar() {
         </Toolbar>
       </Container> 
     </AppBar>
+    </ThemeProvider>
  </div>
   )
 }
