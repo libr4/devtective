@@ -61,7 +61,7 @@ const primary = {
   > */}
   {/* <AppBar sx={{ width: '100%' }}> */}
   <ThemeProvider theme={theme}>
-    <AppBar elevation={0} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, width:'100%'}}>
+    <AppBar elevation={0} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1,}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} /> */}

@@ -25,6 +25,8 @@ import Input from '@mui/material/Input';
 import SignIn from './pages/SignIn';
 import Header from './components/Header';
 import NewTaskPage from './pages/NewTaskPage';
+import SearchTaskForm from './components/SearchTaskForm';
+import SearchTaskPage from './pages/SearchTaskPage';
 
 
 function App() {
@@ -37,7 +39,8 @@ function App() {
       <Box sx={{ display: 'flex' }}>
         <CustomAppBar></CustomAppBar>
         <CustomDrawer></CustomDrawer>
-        <NewTaskPage></NewTaskPage>
+        {/* <NewTaskPage></NewTaskPage> */}
+        <SearchTaskPage></SearchTaskPage>
       </Box>
     </>
   )
