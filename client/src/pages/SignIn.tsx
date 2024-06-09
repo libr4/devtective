@@ -13,9 +13,9 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-function Copyright(props: any) {
+export function Copyright(props: any) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+    <Typography variant="body2" color="text.secondary" align="center" {...props} sx={{zIndex: (theme) => theme.zIndex.drawer + 1,}}>
       {'Copyright © '}
       <Link color="inherit" href="https://mui.com/">
         Your Website

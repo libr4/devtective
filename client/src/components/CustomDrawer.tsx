@@ -19,7 +19,13 @@ import { createTheme } from '@mui/material';
 
 
 export default function CustomDrawer() {
-    const icons = [<CreateIcon/>, <SearchIcon/>, <InboxIcon/>, <MailIcon/>];
+  const color = '#00796b'
+    const icons = [
+                    <CreateIcon color='primary' />, 
+                    <SearchIcon color='primary'/>, 
+                    <InboxIcon color='primary'/>, 
+                    <MailIcon color='primary'/>
+                  ];
 
   const drawerWidth = 210;
 
@@ -66,9 +72,9 @@ const theme = createTheme({
             </ListItem>
           ))}
         </List>
-        {/* <Divider /> */}
+        <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+          {["Configurações"].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
                 <ListItemIcon>

@@ -14,7 +14,11 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
 import { FormControlLabel } from '@mui/material';
 
-export default function Header() {
+export default function Header(props:any) {
+
+  const {title} = props;
+  console.log(title)
+
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -44,7 +48,8 @@ export default function Header() {
               textDecoration: 'none',
             }}
           >
-              Nova Tarefa
+            {title}
+              {/* Nova Tarefa */}
           </Typography>
         </Box> 
           

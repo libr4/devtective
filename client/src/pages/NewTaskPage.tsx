@@ -16,6 +16,9 @@ import { FormControlLabel, createTheme } from '@mui/material';
 import Header from '../components/Header';
 import TaskExample from '../components/TaskExample';
 import { ThemeProvider } from '@emotion/react';
+import { Copyright } from './SignIn';
+import Footer from '../components/Footer';
+import axios from 'axios';
 
 export default function NewTask() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -40,12 +43,17 @@ export default function NewTask() {
       // secondary: purple,
     },
   });
+
+
+
   
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', mt:10, ml:2, width:'100vw' }}>
-        <Header></Header> 
+        <Header title="Nova Tarefa"></Header> 
         <TaskExample></TaskExample>
+        {/* <Copyright></Copyright> */}
+        <Footer></Footer>
     </Box>
   );
 }
