@@ -14,15 +14,38 @@ import CreateIcon from '@mui/icons-material/Create';
 import SearchIcon from '@mui/icons-material/Search';
 // import '../App.css'
 import React from 'react'
+import { ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material';
 
 
 export default function CustomDrawer() {
-    const icons = [<CreateIcon/>, <SearchIcon/>, <InboxIcon/>, <MailIcon/>];
+  const color = '#00796b'
+    const icons = [
+                    <CreateIcon color='primary' />, 
+                    <SearchIcon color='primary'/>, 
+                    <InboxIcon color='primary'/>, 
+                    <MailIcon color='primary'/>
+                  ];
 
   const drawerWidth = 210;
 
+  const primary = {
+    main: '#00796b',           // Main teal color
+    light: '#48a999',          // Lighter shade of the main color
+    dark: '#004c40',           // Darker shade of the main color
+    contrastText: '#ffffff'    // White text contrasts well with the main color
+};
+
+const theme = createTheme({
+  palette: {
+    primary,
+    // secondary: purple,
+  },
+});
+
   return (
     <>
+    <ThemeProvider theme={theme}>
       <Drawer
         sx={{
           width: drawerWidth,
@@ -49,9 +72,9 @@ export default function CustomDrawer() {
             </ListItem>
           ))}
         </List>
-        {/* <Divider /> */}
+        <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+          {["Configurações"].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
@@ -63,5 +86,6 @@ export default function CustomDrawer() {
           ))}
         </List>
       </Drawer>
+    </ThemeProvider>
     </>
 )}

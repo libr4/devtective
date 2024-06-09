@@ -13,9 +13,11 @@ export enum TASK_TYPES {
 }
 
 export enum TASK_PRIORITIES {
+    Very_Low = "Very Low",
     Low = "Low",
     Medium = "Medium",
     High = "High",
+    Very_High = "Very_High",
     Critical = "Critical"
 }
 
