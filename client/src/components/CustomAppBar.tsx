@@ -22,7 +22,7 @@ export default function CustomAppBar() {
   const drawerWidth = 240;
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const pages = ['Tarefa', 'Histórico', 'Chat'];
+  const pages = ['Tarefa', 'Histórico', 'Chat', "Projetos"];
   const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {

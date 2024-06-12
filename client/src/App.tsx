@@ -22,11 +22,12 @@ import ExampleTable from './components/ExampleTable';
 import CustomDrawer from './components/CustomDrawer';
 import Container from '@mui/material/Container';
 import Input from '@mui/material/Input';
-import SignIn from './pages/SignIn';
+import SignIn from './pages/Login';
 import Header from './components/Header';
 import NewTaskPage from './pages/NewTaskPage';
 import SearchTaskForm from './components/SearchTaskForm';
 import SearchTaskPage from './pages/SearchTaskPage';
+import { Outlet } from 'react-router-dom';
 
 
 function App() {
@@ -40,7 +41,8 @@ function App() {
         <CustomAppBar></CustomAppBar>
         <CustomDrawer></CustomDrawer>
         {/* <NewTaskPage></NewTaskPage> */}
-        <SearchTaskPage></SearchTaskPage>
+        <Outlet/>
+        {/* <SearchTaskPage></SearchTaskPage> */}
       </Box>
     </>
   )

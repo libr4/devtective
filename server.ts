@@ -13,6 +13,7 @@ import projectRouter from './routes/projectRouter.js';
 import cookieParser from 'cookie-parser';
 import { authenticateUser, validateJWT } from './middleware/authMiddleware.js';
 import { validateProjectIdParam } from './middleware/projectValidation.js';
+import testRouter from './routes/testRouter.js';
 const app = express();
 
 // app.use(express.urlencoded({ extended: true }));
@@ -29,6 +30,7 @@ app.use('/api/v1/projects', validateJWT, authenticateUser, projectRouter)
 app.use('/api/v1/projects/:projectId/tasks', validateProjectIdParam, validateJWT, authenticateUser, taskRouter)
 app.use('/api/v1/users',  userRouter)
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/test', testRouter)
 
 app.use('*', (req, res) => {
     return res.status(404).json({msg:"Not found!"})

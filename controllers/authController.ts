@@ -13,6 +13,8 @@ import { UserRequest } from '../types/user.js';
 const login = async (req:UserRequest, res:Response) => {
     try {
         console.log("usercontroller", req.user)
+        console.log("username: ", req.body.username)
+        console.log("password: ", req.body.password)
         const user = await User.findOne({username:req.body.username});
         console.log("login user credtaef", user)
         const isValidUser = user && await comparePassword(req.body.password, user.password);

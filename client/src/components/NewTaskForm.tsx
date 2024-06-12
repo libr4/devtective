@@ -24,8 +24,33 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 // import ptLocale from 'date-fns/locale/pt';
 import "dayjs/locale/pt-br";
 import axios from 'axios';
+import { Form } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
-export default function NewTask() {
+export function getHello(e) {
+    e.preventDefault();
+    console.log(test)
+    return null;
+}
+
+
+const action = () =>{ return async function action({request}) {
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+  console.log(data)
+  return data;
+}}
+
+export default function NewTaskForm() {
+
+  const {
+    data: posts,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey:["test"],
+    queryFn:action
+  });
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -34,14 +59,11 @@ export default function NewTask() {
     event.preventDefault();
   };
 
+  const [test, setTest] = useState('')
+
   const LABEL_WIDTH = 120;
   const LABEL_WIDTH_2 = 90;
 
-  async function getHello() {
-    const response = await axios.get('/api/hello') 
-    console.log(response.data)
-    return response;
-  }
 
 const primary = {
   main: '#00796b',           // Main teal color
@@ -63,8 +85,25 @@ const primary = {
 
   const [prioridade, setPrioridade] = useState("Média");
 
+  const initialState = {
+    type:'',
+    priority:'',
+    title:'',
+    description:'',
+    assignedTo:'',
+    technology:'',
+    status:'',
+    deadline:'',
+  }
+
+
+  const [formContent, setFormContent] = useState(initialState);
+
   return (
   <ThemeProvider theme={theme}>
+  <Form
+    // component={'form'}
+    method='post'>
     <Box 
       id="form_wrapper"
       sx={{ 
@@ -109,7 +148,10 @@ const primary = {
             Tipo:&nbsp;&nbsp;
           </Typography>
           <Select
+            name='tipo'
             size='small'
+            value={test}
+            onChange={(e) => {setTest(e.target.value)}}
             defaultValue={tipos[0]}
             sx={
               {
@@ -152,6 +194,7 @@ const primary = {
             size='small'
           /> */}
           <Select
+            name='prioridade'
             fullWidth
             defaultValue={'Média'}
             size='small'>
@@ -241,7 +284,8 @@ const primary = {
             Descrição:&nbsp;&nbsp;
           </Typography>
           <TextField 
-            size='small'
+          name='descricao'
+          size='small'
           multiline
           // fullWidth
           rows={5}
@@ -282,6 +326,7 @@ const primary = {
             Atribuído para:&nbsp;&nbsp;
           </Typography>
           <TextField 
+            name='atribuido'
             size='small'
             sx={{
               width:'50%'
@@ -304,6 +349,7 @@ const primary = {
               Tecnologia:&nbsp;&nbsp;
           </Typography>
           <TextField
+            name='tecnologia'
             size='small'
             fullWidth
           />
@@ -342,6 +388,7 @@ const primary = {
             Andamento:&nbsp;&nbsp;
           </Typography>
           <Select
+            name='status'
             size='small'
             defaultValue={status[0]}
             sx={
@@ -384,14 +431,11 @@ const primary = {
           </Box>
           <LocalizationProvider 
           adapterLocale='pt-br'
-          
           dateAdapter={AdapterDayjs}>
-      <DatePicker />
-    </LocalizationProvider>
-          {/* <TextField
-            size='small'
-            fullWidth
-          /> */}
+          <DatePicker 
+              name='deadline'
+          />
+        </LocalizationProvider>
         </Box>
       </Box>
       {/* Fim da linha um do form */}
@@ -403,31 +447,6 @@ const primary = {
               display:'grid',
               gridTemplateColumns: 'repeat(4, 1fr)', /* Creates 4 equal columns */
             }}>
-        {/* <Box
-          id="input_tipo"
-          sx={{
-            display:'flex',
-            
-            alignItems:'center',
-            alignContent:'left',
-            gridColumn:'span 2'
-          }}>
-          <Typography
-          align='right'
-          sx={
-            {
-              color:'red',
-              width:LABEL_WIDTH
-            }
-          } >
-            Tipo:&nbsp;&nbsp;
-          </Typography>
-          <TextField 
-            size='small'
-            sx={{
-              width:'50%'
-            }}/>
-        </Box> */}
         <Box
       
           id="enviar_tarefa_btn"
@@ -448,22 +467,22 @@ const primary = {
           >
             {/* Prioridade:&nbsp;&nbsp; */}
           </Typography>
-          <Button onClick={getHello} 
+          <Button 
             size='large'
             sx={{
               width:'70%',
             }}
+            type='submit'
             variant='contained'>
               Enviar
           </Button>
-          {/* <TextField
-            size='small' /> */}
         </Box>
       </Box>
       {/* Fim da linha seis do form */}
 
 
     </Box>
+    </Form>
     </ThemeProvider>
   );
 }

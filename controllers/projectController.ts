@@ -6,14 +6,48 @@ import { handleError } from '../middleware/errorHandlerMiddleware.js';
 import ProjectModel from '../models/ProjectModel.js';
 import { UserRequest } from '../types/user.js';
 import { ProjectRequest, IProject } from '../types/project.js';
+import mongoose from 'mongoose';
 
+const projectWithMemberNamesQuery = (userId:string) => [
+    {
+        $match: {
+            members: new mongoose.Types.ObjectId(userId) // filter projects where the given user is a member
+        }
+    },
+    {
+        $lookup: {
+        from: 'users', // the collection name for User model
+        localField: 'members', // field in the Project collection
+        foreignField: '_id', // field in the User collection
+        as: 'memberDetails' // output array field
+        }
+    },
+    {
+        $project: {
+            name: 1,
+            description: 1,
+            status: 1,
+            members: 1,
+            createdBy: 1,
+            leader: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            memberDetails: {
+                _id: 1,
+                name: 1
+            }
+        }
+    }
+]
 //Pega todos os projetos em que o solicitante está associado
 const getAllProjects = async (req:UserRequest, res:Response) => {
     try {
         const userId = req.user?._id as string;
         console.log("projectcontroller", req.user)
-        const allProjects = await ProjectModel.find({members:userId});
-        return res.status(StatusCodes.OK).json(allProjects)
+        // const allProjects = await ProjectModel.find({members:userId});
+
+        const projectsWithMemberNames = await ProjectModel.aggregate(projectWithMemberNamesQuery(userId));
+        return res.status(StatusCodes.OK).json(projectsWithMemberNames)
     } catch (error) {
         handleError(res, error);
     }

@@ -27,7 +27,7 @@ export default function CustomDrawer() {
                     <MailIcon color='primary'/>
                   ];
 
-  const drawerWidth = 210;
+  const drawerWidth = 200;
 
   const primary = {
     main: '#00796b',           // Main teal color
@@ -47,12 +47,24 @@ const theme = createTheme({
     <>
     <ThemeProvider theme={theme}>
       <Drawer
+        
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
+          // width: drawerWidth,
+          // minWidth:'50px',
+          width: {
+            sm:'60px',
+            md:drawerWidth,
+            xs:'60px',
+          },
+          // flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            boxSizing: 'border-box',
+            // width: drawerWidth,
+            // width: {
+            //   sm:'60px',
+            //   md:drawerWidth,
+            //   xs:'60px',
+            // },
+            // boxSizing: 'border-box',
           },
         }}
         variant="permanent"
@@ -64,10 +76,10 @@ const theme = createTheme({
           {['Nova Tarefa', 'Buscar Tarefas', 'Filtros', 'Iniciar chat'].map((text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton>
-                <ListItemIcon>
+                <ListItemIcon sx={{minWidth:'40px'}}>
                   {icons[index]}
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText sx={{display:{sm:'none', md:'block', xs:'none'}}} primary={text} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -76,11 +88,12 @@ const theme = createTheme({
         <List>
           {["Configurações"].map((text, index) => (
             <ListItem key={text} disablePadding>
+              {/* <ListItemButton> */}
               <ListItemButton>
-                <ListItemIcon>
+                <ListItemIcon sx={{minWidth:'40px'}}>
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText sx={{display:{sm:'none', md:'block', xs:'none'}}} primary={text} />
               </ListItemButton>
             </ListItem>
           ))}

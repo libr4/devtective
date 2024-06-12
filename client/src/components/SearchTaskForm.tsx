@@ -12,7 +12,7 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { Button, Divider, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
+import { Button, CircularProgress, Divider, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -26,8 +26,10 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import "dayjs/locale/pt-br";
 import axios from 'axios';
+import TaskGrid from './TaskGrid';
+import { Link } from 'react-router-dom';
 
-export default function NewTask() {
+export default function SearchTaskForm() {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -155,7 +157,8 @@ const primary = {
         alignItems:'center',
         // mt:10, ml:2,
         width:'100vw' ,
-        gap:'10px'
+        gap:'10px',
+        // pl:0
       }}
     >
       <Box
@@ -198,7 +201,7 @@ const primary = {
       <Box
         id="segunda_linha_busca"
         sx={{
-          mt:1
+          mt:0.5
         }}
       >
         <Box
@@ -208,14 +211,18 @@ const primary = {
           id="label_filtros"
         >
           <Typography align='right'>
-            Filtros:&nbsp;&nbsp;
+            Outros filtros:&nbsp;&nbsp;
           </Typography>
         </Box>
       </Box>
       <Divider></Divider>
 
+      {/* <CircularProgress /> */}
+{/* <Link to='/nova_tarefa'>some test</Link> */}
+      <TaskGrid></TaskGrid>
+
       {/* Container para os filtros */}
-      <Box 
+      {false && <Box 
       id="filter_container"
       sx={{
         display:'flex',
@@ -224,29 +231,44 @@ const primary = {
       }}>
         {/* Container para a primeira coluna, que contém uma label e um input */}
         <Box sx={{
-           flex: 2, 
+           flex: 0.4, 
           display:'flex',
           flexDirection:'column',
+          alignItems:'stretch',
+          alignContent:'start',
           // border: '1px solid gray',
           gap:'10px'
         }}>
           <DynamicFilter label="Tipo" width={LABEL_WIDTH} selectItens={tipos}></DynamicFilter>
           <DynamicFilter label="Andamento" width={LABEL_WIDTH} selectItens={status}></DynamicFilter>
-          <DynamicFilter label="Prazo" inputType="date" width={LABEL_WIDTH}></DynamicFilter>
+          {/* <DynamicFilter label="Prazo" inputType="date" width={LABEL_WIDTH}></DynamicFilter> */}
         </Box>
         <Box sx={{
-           flex: 2, 
+           flex: 0.5, 
           display:'flex',
           flexDirection:'column',
+          alignItems:'stretch',
+          alignContent:'start',
           gap:'10px',
           // border: '1px solid gray'
         }}>
           <DynamicFilter label="Prioridade" width={LABEL_WIDTH_2} selectItens={prioridades}></DynamicFilter>
           <DynamicFilter label="Tecnologia" width={LABEL_WIDTH_2}></DynamicFilter>
           </Box>
+        <Box sx={{
+          flex: 0.9, 
+          display:'flex',
+          flexDirection:'column',
+          alignItems:'stretch',
+          alignContent:'start',
+          gap:'10px',
+          // border: '1px solid gray'
+        }}>
+          <DynamicFilter label="Prazo" inputType="date" width={LABEL_WIDTH}></DynamicFilter>
+        </Box>
 
       </Box>
-
+}
     </Box>
     </ThemeProvider>
   );

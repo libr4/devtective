@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema<IUser>({
         enum:USER_ROLES,
         default:USER_ROLES.Not_Specified
     }, // e.g., "admin", "developer", "manager"
-    firstName: {
+    name: {
         type:String,
     },
     lastName: String,

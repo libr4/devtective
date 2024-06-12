@@ -14,12 +14,14 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
 import { FormControlLabel, createTheme } from '@mui/material';
 import Header from '../components/Header';
-import TaskExample from '../components/TaskExample';
+import TaskExample from '../components/NewTaskForm';
 import { ThemeProvider } from '@emotion/react';
-import { Copyright } from './SignIn';
+import { Copyright } from './Login';
 import Footer from '../components/Footer';
 import axios from 'axios';
 import SearchTaskForm from '../components/SearchTaskForm';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function NewTask() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -46,11 +48,15 @@ export default function NewTask() {
   });
 
 
+  // const navigate = useNavigate();
+  // useEffect(() => {
+  //   navigate('/nova_tarefa')
+  // }, [])
 
   
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', mt:10, ml:2, }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', mt:9.5, ml:0, }}>
         <Header title="Buscar tarefas"></Header> 
         <SearchTaskForm></SearchTaskForm>
         {/* <Copyright></Copyright> */}
