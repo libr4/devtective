@@ -9,26 +9,11 @@ import bcrypt from 'bcryptjs'
 import { generateCredentials } from '../../utils/testUtils';
 
 let tokenCookie:string;
-// const credentials = {
-//     username:"usuario_teste",
-//     password:"password",
-//     email:"teste@teste.com",
-//     firstName:"Teste"
-// }
 
 const credentials = generateCredentials();
 let DBConnection:Mongoose;
 let user:IUser;
 let testDeleteProject:IProject;
-
-// let mockUser:IUser = {
-//     username:'test_user',
-//     password:'test_password',
-//     email:'teste@teste.com',
-//     firstName:'Teste da Silva'
-// } as IUser
-
-// let testUser:IUser;
 
 beforeAll(async () => {
     jest.setTimeout(30000); // 30 seconds
@@ -143,7 +128,7 @@ describe("USERS API", () => {
         it("should return an updated user", async () => {
             const changes = {
                 username:"changed",
-                firstName:"Changed"
+                name:"Changed"
             }
             const response = await request(app)
                 .patch(`/api/v1/users/${user._id}`)
@@ -152,14 +137,13 @@ describe("USERS API", () => {
 
             expect(response.body._id.toString()).toBe(user._id.toString());
             expect(response.body.username).not.toBe(user.username);
-            expect(response.body.firstName).not.toBe(user.firstName);
-
+            expect(response.body.name).not.toBe(user.name);
         })
 
         it("should return an user with the changes", async () => {
             const changes = {
                 username:"hasjldfhkjadf",
-                firstName:"xmcznviuowqr"
+                name:"xmcznviuowqr"
             }
             const response = await request(app)
                 .patch(`/api/v1/users/${user._id}`)
@@ -168,7 +152,7 @@ describe("USERS API", () => {
             
             expect(response.body._id.toString()).toBe(user._id.toString());
             expect(response.body.username).toBe(changes.username);
-            expect(response.body.firstName).toBe(changes.firstName);
+            expect(response.body.name).toBe(changes.name);
 
         })
     })

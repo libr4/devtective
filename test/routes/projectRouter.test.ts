@@ -69,6 +69,7 @@ describe("PROJECT API", () => {
             .set('Cookie', tokenCookie)
         expect(response.statusCode).toBe(200)
         expect(response.body).toBeInstanceOf(Array);
+        console.log("every project", response.body);
         expect(response.body.length).toBe(3);
     })
 

@@ -12,6 +12,8 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useState } from 'react';
+import TablePagination from '@mui/material/TablePagination';
 
 function createData(name, calories, fat, carbs, protein, price) {
   return {
@@ -67,7 +69,10 @@ function Row(props) {
               <Typography variant="h6" gutterBottom component="div">
                 History
               </Typography>
-              <Table size="small" aria-label="purchases">
+              <Typography gutterBottom component="div">
+              "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+              </Typography>
+              {/* <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
                     <TableCell>Date</TableCell>
@@ -90,7 +95,7 @@ function Row(props) {
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+              </Table> */}
             </Box>
           </Collapse>
         </TableCell>
@@ -108,6 +113,17 @@ const rows = [
 ];
 
 export default function CollapsibleTable() {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
   return (
     <Box sx={{ overflowY: 'auto', mt:10, width:'80vw',
         // maxHeight: 'calc(100vh - 112px)' }}>
@@ -133,13 +149,15 @@ export default function CollapsibleTable() {
             Histórico da Tarefa
         </Typography>
       <TableContainer component={Paper}>
-        <Table aria-label="collapsible table">
+        <Table 
+          // sx={{tableLayout:'fixed'}} 
+          aria-label="collapsible table">
           <TableHead>
             <TableRow>
               <TableCell />
-              <TableCell>39435</TableCell>
-              <TableCell  >Autor</TableCell>
-              <TableCell>Fase</TableCell>
+              {/* <TableCell>39435</TableCell> */}
+              <TableCell   align='left'>Autor</TableCell>
+              <TableCell align='right'>Fase</TableCell>
               <TableCell align="right">Prioridade</TableCell>
               <TableCell align="right">Tipo</TableCell>
               <TableCell align="right">Tecnologia</TableCell>
@@ -152,6 +170,15 @@ export default function CollapsibleTable() {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
     </Box>
   );
 }

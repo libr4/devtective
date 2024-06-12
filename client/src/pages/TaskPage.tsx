@@ -19,6 +19,7 @@ import { Copyright } from './Login';
 import Footer from '../components/Footer';
 import axios from 'axios';
 import NewTaskForm from '../components/NewTaskForm';
+import TaskGrid from '../components/TaskGrid';
 
 export default function NewTask() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -50,8 +51,8 @@ export default function NewTask() {
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2, }}>
-        <Header title="Nova Tarefa"></Header> 
-        <NewTaskForm></NewTaskForm>
+        <Header title="Tarefas"></Header> 
+        <TaskGrid></TaskGrid>
         {/* <Copyright></Copyright> */}
         <Footer></Footer>
     </Box>

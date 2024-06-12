@@ -7,7 +7,7 @@ export interface IUser extends Document {
     email: string,
     password: string, // Hashed password
     role: USER_ROLES, // e.g., "admin", "developer", "manager"
-    firstName: string,
+    name: string,
     lastName: string,
     // profilePictureUrl: String, // URL to the user's profile picture
     status: string, // e.g., "active", "inactive", "banned"
