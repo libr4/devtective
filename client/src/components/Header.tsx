@@ -12,12 +12,19 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { FormControlLabel } from '@mui/material';
+import { Alert, FormControlLabel } from '@mui/material';
+import { useLocaleText } from '@mui/x-date-pickers/internals';
+import { useLocation } from 'react-router-dom';
 
 export default function Header(props:any) {
 
-  const {title} = props;
+  let {title} = props;
+  const {validation} = props;
   console.log(title)
+  const {state} = useLocation()
+
+  if(state?.title) title = state.title;
+  const taskId = state?.taskId || '';
 
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -28,8 +35,13 @@ export default function Header(props:any) {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', width:'100vw' }}>
-        <Box>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', width:'45vw' }}>
+        <Box 
+          sx={{
+            width:'100%',
+            display:'flex',
+            justifyContent:'space-between'
+          }}>
           <Typography
             variant="h6"
             noWrap
@@ -48,9 +60,9 @@ export default function Header(props:any) {
               textDecoration: 'none',
             }}
           >
-            {title}
-              {/* Nova Tarefa */}
+            {taskId ? (taskId + " - ") : ''}{title}
           </Typography>
+          {validation && <Alert severity='error'>{validation}</Alert>}
         </Box> 
           
   </Box>

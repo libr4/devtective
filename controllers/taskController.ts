@@ -19,9 +19,11 @@ const getAllTasks = async (req:ProjectRequest, res:Response) => {
     }
 }
 
-const createTask = async (req:UserRequest, res:Response) => {
+const createTask = async (req:ProjectRequest, res:Response) => {
     try {
-        const fromProject = req.params.projectId;
+        const fromProject = req.project?._id;
+        console.log('fromProejct', fromProject)
+        console.log('reqbodyfromproject', req.body.fromProject)
         //se o projeto não for especificado, cadastra o projeto da url
         if (!req.body.fromProject) {
             req.body.fromProject = fromProject;

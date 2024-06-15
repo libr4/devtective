@@ -16,13 +16,14 @@ import { PiDetectiveFill } from "react-icons/pi";
 import { GiSmokingPipe } from "react-icons/gi";
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
+import { Link } from 'react-router-dom';
 // import '../App.css'
 
 export default function CustomAppBar() {
   const drawerWidth = 240;
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const pages = ['Tarefa', 'Histórico', 'Chat', "Projetos"];
+  const pages = [{label:'Tarefa', link:'/tarefa'}, {label:'Histórico', link:'/progresso'}, {label:'Chat', link:'#'}, {label:'Projetos', link:'/projetos'}];
   const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -117,8 +118,11 @@ const primary = {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                  {/* <Typography textAlign="center">{page.label}</Typography> */}
+                <Typography sx={{all:'unset'}} component={Link} to={page.link}>
+                  {page.label}
+                </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -145,11 +149,14 @@ const primary = {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.label}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                <Typography sx={{all:'unset'}} component={Link} to={page.link}>
+                  {page.label}
+                </Typography>
+                  {/* <Typography component={Link} to='/projetos' textAlign="center">{page}</Typography> */}
               </Button>
             ))}
           </Box>

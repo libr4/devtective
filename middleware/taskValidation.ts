@@ -151,38 +151,3 @@ export const validateIdParam = async (req:TaskRequest, res:Response, next:NextFu
     }
     return next();
 }
-
-
-const MIN_USERNAME = 8;
-const MAX_USERNAME = 16;
-const validateUsername = (username:string) => {
-    const fieldName = "username";
-    const requiredError = validateRequired(username, fieldName);
-    if (requiredError) return requiredError;
-
-    const typeError = checkType(username, fieldName, "string")
-
-    const sizeError = checkSize(username, fieldName, MIN_USERNAME, MAX_USERNAME);
-    if (sizeError) return sizeError;
-    return '';
-}
-
-const MIN_PASSWORD = 8;
-const MAX_PASSWORD = 128;
-const validatePassword = (password:string):string => {
-    const fieldName = "password";
-    const requiredError = validateRequired(password, fieldName);
-    if (requiredError) return requiredError;
-
-    const typeError = checkType(password, fieldName, "string")
-
-    const sizeError = checkSize(password, fieldName, MIN_PASSWORD, MAX_PASSWORD);
-    if (sizeError) return sizeError;
-    body('email').notEmpty().withMessage('Body empty').isEmail().withMessage("Invalid Email Format");
-
-    return '';
-}
-
-export const validateRegisterData = (req:Request, res:Response, next:NextFunction) => {
-    validatePassword(req.body.password);
-}

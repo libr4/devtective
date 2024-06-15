@@ -28,6 +28,7 @@ import NewTaskPage from './pages/NewTaskPage';
 import SearchTaskForm from './components/SearchTaskForm';
 import SearchTaskPage from './pages/SearchTaskPage';
 import { Outlet } from 'react-router-dom';
+import Footer from './components/Footer';
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         {/* <NewTaskPage></NewTaskPage> */}
         <Outlet/>
         {/* <SearchTaskPage></SearchTaskPage> */}
+        <Footer></Footer>
       </Box>
     </>
   )

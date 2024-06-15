@@ -1,23 +1,24 @@
 export enum TASK_STATUS {
-    Open = "Open",
-    InProgress = "in progress",
-    Completed = "Completed",
-    Paused = "Paused"
+    Open = "Aberta",
+    InProgress = "Desenvolvimento",
+    Completed = "Concluída",
+    Paused = "Adiada",
+    Teste = "Teste"
 }
 
 export enum TASK_TYPES {
-    Task = "Task",
+    Task = "Tarefa",
     Bug = "Bug",
-    Functionality = "Functionality",
-    Error = "Error",
+    Functionality = "Funcionalidade",
+    Error = "Erro",
 }
 
 export enum TASK_PRIORITIES {
-    Very_Low = "Very Low",
-    Low = "Low",
-    Medium = "Medium",
-    High = "High",
-    Very_High = "Very_High",
+    Very_Low = "Muito Baixa",
+    Low = "Baixa",
+    Medium = "Média",
+    High = "Alta",
+    Very_High = "Muito Alta",
     Critical = "Critical"
 }
 

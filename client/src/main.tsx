@@ -20,13 +20,15 @@ import TaskGrid from './components/TaskGrid.js';
 import CollapsibleTable from './components/CollapsibleTable.js';
 import ExampleTable from './components/ExampleTable.js';
 import TaskPage from './pages/TaskPage.js';
+import TaskView from './components/TaskView.js';
+import TaskViewPage from './pages/TaskViewPage.js';
 
 const root = document.getElementById('root') as HTMLElement;
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,
+      staleTime: 1000 * 30,
     },
   },
 });
@@ -38,12 +40,7 @@ const router = createBrowserRouter([
     errorElement:<ErrorPage></ErrorPage>,
     children:[
       {
-        path:'nova_tarefa',
-        element:<NewTaskPage />,
-        // action:action,
-      },
-      {
-        path:'buscar',
+        path:':projectId/tasks',
         element:<SearchTaskPage />
       },
       {
@@ -51,9 +48,22 @@ const router = createBrowserRouter([
         element:<CollapsibleTable />
       },
   {
-    path:'/projetos',
+    path:'projetos',
     element:<ProjectPage />,
+    // children:[
+
+    // ]
     // action:registerAction,
+  },
+  {
+    path:':projectId/nova_tarefa',
+    element:<NewTaskPage />,
+    // action:action,
+  },
+  {
+    path:':projectId/task/:taskId',
+    element:<TaskViewPage />,
+    // action:action,
   },
   {
     path:'/task-grid',

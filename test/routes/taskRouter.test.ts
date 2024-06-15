@@ -129,6 +129,7 @@ describe("TASKS API", () => {
             expect(response.body.title).toBe(newTask.title);
             expect(response.body.description).toBe(newTask.description);
             expect(response.body.type).toBe(newTask.type);
+            expect(response.body.fromProject.toString()).toBe(testProject1._id.toString())
         })
 
         

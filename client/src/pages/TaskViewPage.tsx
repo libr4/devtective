@@ -14,14 +14,14 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
 import { FormControlLabel, createTheme } from '@mui/material';
 import Header from '../components/Header';
-import TaskExample from '../components/NewTaskForm';
 import { ThemeProvider } from '@emotion/react';
 import { Copyright } from './Login';
 import Footer from '../components/Footer';
 import axios from 'axios';
-import SearchTaskForm from '../components/SearchTaskForm';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import NewTaskForm from '../components/NewTaskForm';
+import TaskGrid from '../components/TaskGrid';
+import TaskView from '../components/TaskView';
+import { useLocation } from 'react-router-dom';
 
 export default function NewTask() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -32,26 +32,34 @@ export default function NewTask() {
     event.preventDefault();
   };
 
+  const {state} = useLocation();
+  console.log("state1: ", state);
+
 
   const primary = {
     main: '#9b111e',
-    light: '#42a5f5',
-    dark: '#1565c0',
-    contrastText: '#fff',
+    // light: '#42a5f5',
+    // dark: '#1565c0',
+    // contrastText: '#fff',
   };
 
   const theme = createTheme({
     palette: {
       primary,
+      // secondary: purple,
     },
   });
 
+
+
+  
+
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', mt:9.5, ml:2, }}>
-        <Header title="Encontrar tarefas"></Header> 
-        <SearchTaskForm></SearchTaskForm>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2, }}>
+        <Header title="Tarefas"></Header> 
+        <TaskView></TaskView>
         {/* <Copyright></Copyright> */}
-        <Footer></Footer>
+        {/* <Footer></Footer> */}
     </Box>
   );
 }

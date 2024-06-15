@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardActionArea, CardMedia, CardContent, Typography, ThemeProvider, createTheme, Box, CardActions, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { Link } from 'react-router-dom';
 // import cover from '../assets/detective.jpg'
 
 const theme = createTheme({
@@ -28,7 +29,7 @@ function getMemberNames(members) {
   return memberNames;
 }
 
-const StyledCard = ({ title , description, members}) => (
+const StyledCard = ({ title , description, members, projectId}) => (
   <ThemeProvider theme={theme}>
     <Card
       elevation={5}
@@ -46,7 +47,7 @@ const StyledCard = ({ title , description, members}) => (
         },
       }}
     >
-      <CardActionArea>
+      <CardActionArea component={Link} to={`/${projectId}/tasks`}>
         <CardMedia
         component={'div'}
           sx={{ height: 0, backgroundColor: '#f0f0f0' }}

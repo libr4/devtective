@@ -1,4 +1,9 @@
 import crypto from 'crypto';
+import { TASK_TYPES } from './constants';
+
+function getRandomInt(max:number) {
+  return Math.floor(Math.random() * max);
+}
 
 const randomStrOfSize = (size:number) => {
   const randomString = crypto.randomBytes(size).toString('hex');
@@ -17,12 +22,15 @@ export function generateCredentials() {
 }
 
 export function generateMockTask() {
-    const randomString = crypto.randomBytes(4).toString('hex');
+    const randomString = crypto.randomBytes(4).toString('hex'); 
+    const types = Object.values(TASK_TYPES);
+    const randomNumber = getRandomInt(types.length);
+    const randomType = types[randomNumber];
     return {
       title: `${randomStrOfSize(10)} ${randomStrOfSize(10)} ${randomStrOfSize(10)}`,
       description: `${randomStrOfSize(10)} ${randomStrOfSize(10)} ${randomStrOfSize(10)}
                     ${randomStrOfSize(10)} ${randomStrOfSize(10)} ${randomStrOfSize(10)}
                     ${randomStrOfSize(10)} ${randomStrOfSize(10)} ${randomStrOfSize(10)}`,
-      type:"Error"
+      type:randomType
     };
   }

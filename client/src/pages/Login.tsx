@@ -75,6 +75,7 @@ const primary = {
 
 export default function SignIn() {
   const navigate = useNavigate()
+
   const loginQuery = useMutation({
     mutationFn: (data:loginData) => axios.post('/api/v1/auth/login', data),
     onSuccess:() => {navigate('/projetos')}

@@ -12,7 +12,7 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { Button, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
+import { Button, Divider, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -24,39 +24,56 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 // import ptLocale from 'date-fns/locale/pt';
 import "dayjs/locale/pt-br";
 import axios from 'axios';
-import { Form } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { Form, useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export function getHello(e) {
     e.preventDefault();
     console.log(test)
     return null;
 }
+  const dicionario = {
+    title:'Título',
+    type:'Tipo',
+    priority:'Prioridade',
+    description:'Descrição',
+    assignedTo:'Atribuído para',
+    status:'Andamento',
+    technology:'Tecnologia',
+    deadline:'Prazo',
+  }
 
 
-const action = () =>{ return async function action({request}) {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  console.log(data)
-  return data;
-}}
+function validateRequired(data) {
+  const fields:string[] = [];
+  for (let property in data) {
+    if (data[property] === '') {
+      fields.push(dicionario[property])
+    }
+  }
+  return fields;
+}
 
-export default function NewTaskForm() {
+export default function NewTaskForm({setValidation}) {
 
-  const {
-    data: posts,
-    error,
-    isLoading,
-  } = useQuery({
-    queryKey:["test"],
-    queryFn:action
-  });
-  const [showPassword, setShowPassword] = React.useState(false);
+  interface NewTask {
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  }
+  const navigate = useNavigate();
+  const {projectId} = useParams();
+  const newTaskMutation = useMutation({
+    mutationFn: async (data:NewTask) => await axios.post(`/api/v1/projects/${projectId}/tasks`, data),
+    onSuccess:(data) => navigate(`/${projectId}/task/${data?.data?.taskId}`, {state:data.data}),
+  })
 
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const data:NewTask = Object.fromEntries(formData);
+    delete data['assignedTo'];
+    // const requiredError = validateRequired(data);
+    // if (requiredError.length) return setValidation(`Preencha o(s) campos: ${requiredError.join(', ')}`)
+    newTaskMutation.mutate(data);
   };
 
   const [test, setTest] = useState('')
@@ -83,25 +100,10 @@ const primary = {
   const status = ["Aberta", "Desenvolvimento", "Teste", "Adiada", "Concluída", "Personalizada" ]
   const tipos = ["Erro", "Bug", "Requisito", "Funcionalidade", "Atualização", "Personalizada" ]
 
-  const [prioridade, setPrioridade] = useState("Média");
-
-  const initialState = {
-    type:'',
-    priority:'',
-    title:'',
-    description:'',
-    assignedTo:'',
-    technology:'',
-    status:'',
-    deadline:'',
-  }
-
-
-  const [formContent, setFormContent] = useState(initialState);
-
   return (
   <ThemeProvider theme={theme}>
   <Form
+    onSubmit={handleSubmit}
     // component={'form'}
     method='post'>
     <Box 
@@ -112,7 +114,7 @@ const primary = {
         display: 'grid',
         alignItems:'center',
         // mt:10, ml:2,
-        width:'100vw' ,
+        width:'100%' ,
         gap:'10px'
       }}
     >
@@ -140,15 +142,13 @@ const primary = {
           sx={
             {
               width:LABEL_WIDTH
-
             }
           }
-          
           >
             Tipo:&nbsp;&nbsp;
           </Typography>
           <Select
-            name='tipo'
+            name='type'
             size='small'
             value={test}
             onChange={(e) => {setTest(e.target.value)}}
@@ -194,7 +194,7 @@ const primary = {
             size='small'
           /> */}
           <Select
-            name='prioridade'
+            name='priority'
             fullWidth
             defaultValue={'Média'}
             size='small'>
@@ -208,7 +208,7 @@ const primary = {
         </Box>
       </Box>
       {/* Fim da linha um do form */}
-
+<Divider></Divider>
       
        {/* Linha dois do form */}
       <Box id="form_linha_dois"
@@ -237,12 +237,12 @@ const primary = {
               width:LABEL_WIDTH
             }
           }
-          
           >
             Título:&nbsp;&nbsp;
           </Typography>
           <TextField 
-          
+          // required
+            name='title'
             size='small'
             // fullWidth
             sx={{
@@ -284,7 +284,7 @@ const primary = {
             Descrição:&nbsp;&nbsp;
           </Typography>
           <TextField 
-          name='descricao'
+          name='description'
           size='small'
           multiline
           // fullWidth
@@ -326,7 +326,7 @@ const primary = {
             Atribuído para:&nbsp;&nbsp;
           </Typography>
           <TextField 
-            name='atribuido'
+            name='assignedTo'
             size='small'
             sx={{
               width:'50%'
@@ -349,7 +349,7 @@ const primary = {
               Tecnologia:&nbsp;&nbsp;
           </Typography>
           <TextField
-            name='tecnologia'
+            name='technology'
             size='small'
             fullWidth
           />
@@ -380,7 +380,6 @@ const primary = {
           sx={
             {
               width:LABEL_WIDTH
-
             }
           }
           
@@ -468,6 +467,7 @@ const primary = {
             {/* Prioridade:&nbsp;&nbsp; */}
           </Typography>
           <Button 
+          // onClick={() => setValidation("button clicked")}
             size='large'
             sx={{
               width:'70%',

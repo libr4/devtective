@@ -19,6 +19,8 @@ import { Copyright } from './Login';
 import Footer from '../components/Footer';
 import axios from 'axios';
 import NewTaskForm from '../components/NewTaskForm';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
 
 export default function NewTask() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -45,13 +47,14 @@ export default function NewTask() {
   });
 
 
+  const [validation, setValidation] = useState('');
 
   
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2, }}>
-        <Header title="Nova Tarefa"></Header> 
-        <NewTaskForm></NewTaskForm>
+        <Header validation={validation} title="Nova Tarefa"></Header> 
+        <NewTaskForm setValidation={setValidation}></NewTaskForm>
         {/* <Copyright></Copyright> */}
         <Footer></Footer>
     </Box>

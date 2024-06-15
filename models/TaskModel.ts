@@ -20,12 +20,16 @@ export interface ITask extends Document {
   createdBy: mongoose.Types.ObjectId; // Reference to the User
   createdAt: Date;
   updatedAt: Date;
+  deadline: string;
 }
 
 const TaskSchema = new mongoose.Schema<ITask>({
   
   taskId: {type: Number, unique:true},
-  title: String,
+  title: {
+    type:String,
+    required:true,
+  },
   description: String,
   status: { 
     type: String, 
@@ -41,6 +45,10 @@ const TaskSchema = new mongoose.Schema<ITask>({
     type:String,
     default:"",
   },
+  deadline: {
+    type:String,
+    // default:"",
+  },
   type: {
     type:String,
     enum: TASK_TYPES,
@@ -49,8 +57,7 @@ const TaskSchema = new mongoose.Schema<ITask>({
   fromProject: {
     type: mongoose.Schema.Types.ObjectId,
     ref:"Project",
-    unique:true,
-
+    // unique:true,
   },
   assignedTo: {
     type:mongoose.Schema.Types.ObjectId, // Refrence to the User

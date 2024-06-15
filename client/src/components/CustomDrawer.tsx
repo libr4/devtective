@@ -15,7 +15,8 @@ import SearchIcon from '@mui/icons-material/Search';
 // import '../App.css'
 import React from 'react'
 import { ThemeProvider } from '@emotion/react';
-import { createTheme } from '@mui/material';
+import { Typography, createTheme } from '@mui/material';
+import { Link, useParams } from 'react-router-dom';
 
 
 export default function CustomDrawer() {
@@ -27,7 +28,7 @@ export default function CustomDrawer() {
                     <MailIcon color='primary'/>
                   ];
 
-  const drawerWidth = 200;
+  const drawerWidth = 180;
 
   const primary = {
     main: '#00796b',           // Main teal color
@@ -42,6 +43,8 @@ const theme = createTheme({
     // secondary: purple,
   },
 });
+
+  const {projectId} = useParams();
 
   return (
     <>
@@ -74,6 +77,12 @@ const theme = createTheme({
         <Divider />
         <List>
           {['Nova Tarefa', 'Buscar Tarefas', 'Filtros', 'Iniciar chat'].map((text, index) => (
+                <Link 
+                style={{
+                  display:'inline',
+                  all:'unset',
+                }}
+                 to={`${projectId}/nova_tarefa`}>
             <ListItem key={text} disablePadding>
               <ListItemButton>
                 <ListItemIcon sx={{minWidth:'40px'}}>
@@ -82,6 +91,7 @@ const theme = createTheme({
                 <ListItemText sx={{display:{sm:'none', md:'block', xs:'none'}}} primary={text} />
               </ListItemButton>
             </ListItem>
+                </Link>
           ))}
         </List>
         <Divider />

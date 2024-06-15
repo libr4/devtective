@@ -27,7 +27,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import "dayjs/locale/pt-br";
 import axios from 'axios';
 import TaskGrid from './TaskGrid';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 export default function SearchTaskForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -37,6 +37,9 @@ export default function SearchTaskForm() {
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
+
+  const {projectId} = useParams();
+  console.log("projectid", projectId)
 
   const fields = [];
 
@@ -145,6 +148,12 @@ const primary = {
 
   const [prioridade, setPrioridade] = useState("Média");
 
+  const [results, setResult] = useState(true);
+
+  function toggleResult() {
+    setResult(!results)
+  }
+
 
   return (
   <ThemeProvider theme={theme}>
@@ -156,7 +165,7 @@ const primary = {
         display: 'grid',
         alignItems:'center',
         // mt:10, ml:2,
-        width:'100vw' ,
+        width:'100%' ,
         gap:'10px',
         // pl:0
       }}
@@ -204,25 +213,32 @@ const primary = {
           mt:0.5
         }}
       >
-        <Box
+         <Box
           sx={{
-            width:LABEL_WIDTH
+          display:'flex',
+            // width:420
           }}
           id="label_filtros"
         >
-          <Typography align='right'>
-            Outros filtros:&nbsp;&nbsp;
-          </Typography>
+          <Button onClick={() => setResult(true)} >
+            Resultados&nbsp; 
+          </Button>
+            <Divider variant='middle' textAlign='center' orientation='vertical'/>
+            {/* /&nbsp; */}
+          <Button onClick={() => setResult(false)}>
+             Outros filtros&nbsp;&nbsp;
+          </Button>
         </Box>
-      </Box>
       <Divider></Divider>
+        
+      </Box>
 
       {/* <CircularProgress /> */}
 {/* <Link to='/nova_tarefa'>some test</Link> */}
-      <TaskGrid></TaskGrid>
+      {results && <TaskGrid></TaskGrid>}
 
       {/* Container para os filtros */}
-      {false && <Box 
+      {!results && <Box 
       id="filter_container"
       sx={{
         display:'flex',

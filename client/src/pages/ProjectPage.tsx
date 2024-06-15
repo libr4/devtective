@@ -12,7 +12,7 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { Button, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
+import { Button, CircularProgress, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -115,7 +115,8 @@ const primary = {
   <ThemeProvider theme={theme}>
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2 }}>
     <Header title="Projetos"></Header>
-    <Box 
+    {  projectQuery.isLoading ? <CircularProgress />
+    :<Box 
       id="form_wrapper"
       sx={{ 
         overflow:'auto',
@@ -124,17 +125,17 @@ const primary = {
         alignItems:'center',
         flexWrap:'wrap',
          pl:2,
-        width:'100vw' ,
+        width:'100vw',
         gap:'10px'
       }}
     >
       {projectQuery.data.map((item, index) => {
-        return <ProjectCard key={index} members={item.memberDetails} title={item.name.toUpperCase()} description={item.description}></ProjectCard>
+        return <ProjectCard key={index} members={item.memberDetails} title={item.name.toUpperCase()} description={item.description} projectId={item._id}></ProjectCard>
       })}
       {/* <ProjectCard title="DEVTECTIVE" description="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"></ProjectCard>
       <ProjectCard title="REDIRECT" description={"shablau"}></ProjectCard>
       <ProjectCard title="BLABLABLA" description={"shablau"}></ProjectCard> */}
-    </Box>
+    </Box>}
     </Box>
     </ThemeProvider>
   );
