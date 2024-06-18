@@ -23,42 +23,47 @@ import { visuallyHidden } from '@mui/utils';
 import Header from './Header';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Data {
+  taskId: number;
   id: number;
-  calories: number;
-  carbs: number;
-  fat: number;
-  name: string;
-  protein: number;
-  lastModification: number;
+  title: string;
+  type: string;
+  assignedTo: string;
+  priority: string;
+  status: string;
+  lastModification: string;
 }
 
 function createData(
+  taskId: number,
   id: number,
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
+  title: string,
+  type: string,
+  assignedTo: string,
+  priority: string,
+  status: string,
+  lastModification: string,
 ): Data {
   return {
+    taskId,
     id,
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
+    title,
+    type,
+    assignedTo,
+    priority,
+    status,
+    lastModification,
   };
 }
 
-const rows = [
-  createData(1, 'Cupcake', 305, 3.7, 67, 4.3),
+// const rows = [
+//   createData(1, 'Cupcake', "teste", "test", "test", "test", "10/10/10"),
 //   createData(2, 'Donut', 452, 25.0, 51, 4.9),
 //   createData(3, 'Eclair', 262, 16.0, 24, 6.0),
 //   createData(4, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
@@ -71,7 +76,7 @@ const rows = [
 //   createData(11, 'Marshmallow', 318, 0, 81, 2.0),
 //   createData(12, 'Nougat', 360, 19.0, 9, 37.0),
 //   createData(13, 'Oreo', 437, 18.0, 63, 4.0),
-];
+// ];
 
 
 
@@ -124,31 +129,31 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: 'name',
+    id: 'title',
     numeric: false,
     disablePadding: true,
     label: 'Título',
   },
   {
-    id: 'calories',
+    id: 'priority',
     numeric: true,
     disablePadding: false,
     label: 'Prioridade',
   },
   {
-    id: 'fat',
+    id: 'type',
     numeric: true,
     disablePadding: false,
     label: 'Tipo',
   },
   {
-    id: 'carbs',
+    id: 'status',
     numeric: true,
     disablePadding: false,
     label: 'Andamento',
   },
   {
-    id: 'protein',
+    id: 'assignedTo',
     numeric: true,
     disablePadding: false,
     label: 'Atribuído para',
@@ -228,64 +233,14 @@ interface EnhancedTableToolbarProps {
   numSelected: number;
 }
 
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Nutrition
-        </Typography>
-      )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-}
-
 
 export default function EnhancedTable() {
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<keyof Data>('calories');
+  const [order, setOrder] = React.useState<Order>('desc');
+  const [orderBy, setOrderBy] = React.useState<keyof Data>('taskId');
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rows, setRows] = useState<Data[]>([]);
 
     const {projectId} = useParams();
     console.log("from taskgrid", projectId)
@@ -296,6 +251,12 @@ export default function EnhancedTable() {
             return response.data;
         }
     })
+
+    useEffect(() => {
+        if (!allTasksQuery.isLoading && allTasksQuery.data) {
+          setRows(allTasksQuery.data);
+        }
+      }, [allTasksQuery.isLoading, allTasksQuery.data]);
 
 
 
@@ -317,12 +278,12 @@ export default function EnhancedTable() {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-    const selectedIndex = selected.indexOf(id);
+  const handleClick = (event: React.MouseEvent<unknown>, id: number | string) => {
+    const selectedIndex = selected.indexOf(id as number);
     let newSelected: readonly number[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
+      newSelected = newSelected.concat(selected, id as number);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -345,31 +306,35 @@ export default function EnhancedTable() {
     setPage(0);
   };
 
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
 
-  const isSelected = (id: number) => selected.indexOf(id) !== -1;
+  const isSelected = (id: number | string) => selected.indexOf(id as number) !== -1;
 
 
-  // Avoid a layout jump when reaching the last page with empty rows.
+//   const buffer = allTasksQuery.isLoading ? [] : allTasksQuery?.data;
+//   const rows = [...buffer];
+//   let rows = allTasksQuery?.data || [];
+  
+//   React.useEffect(() => {
+//     if (!allTasksQuery.isLoading) {
+//         rows = allTasksQuery?.data;
+//     }
+//   }, [allTasksQuery.isLoading])
 
-//   const visibleRows = React.useMemo(
-//     () =>
-//       stableSort(rows, getComparator(order, orderBy)).slice(
-//         page * rowsPerPage,
-//         page * rowsPerPage + rowsPerPage,
-//       ),
-//     [order, orderBy, page, rowsPerPage],
-//   );
+  const visibleRows = React.useMemo(
+    () =>
+      stableSort(rows, getComparator(order, orderBy)).slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage,
+      ),
+    [order, orderBy, page, rowsPerPage, rows],
+  );
     if(allTasksQuery.isLoading) 
     return <Container sx={{height:'100%', width:'80vw', marginLeft:'auto', marginTop:'auto', marginRight:'auto'}}>
                 <CircularProgress></CircularProgress>
             </Container>
+//   rows = allTasksQuery?.data;
 
-    const rows = [...allTasksQuery.data];
 
-    console.log(allTasksQuery.data)
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
@@ -389,7 +354,7 @@ export default function EnhancedTable() {
 
   return (
     <ThemeProvider theme={theme}>
-    <Box sx={{ width: '80vw' }}>
+    <Box sx={{mt:0, pt:0, width: '100%' }}>
      
       <Paper sx={{ 
             // width: '100vw',
@@ -410,24 +375,27 @@ export default function EnhancedTable() {
               rowCount={rows.length}
             />
             <TableBody>
-              {rows.map((row, index) => {
-                const isItemSelected = isSelected(row._id);
+              {!allTasksQuery.isLoading && visibleRows.map((row, index) => {
+                const isItemSelected = isSelected(row.taskId);
                 const labelId = `enhanced-table-checkbox-${index}`;
+                console.log("taskId rows", row.taskId)
 
                 return (
+                //   <TableRow
                   <TableRow
-                    // color={'red'}
-                    
-                    hover
-                    onClick={(event) => handleClick(event, row._id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row._id}
-                    selected={isItemSelected}
-                    sx={{ 
+                        component={Link}
+                        to={`/${projectId}/task/${row.taskId}`}
+                        state={visibleRows.filter(el => el.taskId == row.taskId)[0]}
+                        hover
+                    // onClick={(event) => handleClick(event, row.id)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.taskId}
+                        selected={isItemSelected}
+                        sx={{ 
                         // backGroundColor:'black',
-                        cursor: 'pointer' 
+                            cursor: 'pointer' 
                     }}
                   >
                     <TableCell padding="checkbox">
@@ -440,12 +408,16 @@ export default function EnhancedTable() {
                       />
                     </TableCell>
                     <TableCell
-                      component="th"
+                    //   component="th"
+                    //   component={Link}
+                    //   to='projetos'
                       id={labelId}
                       scope="row"
                       padding="none"
                     >
+                    {/* <Link to='projetos'> */}
                       {row.title}
+                    {/* </Link> */}
                     </TableCell>
                     <TableCell align="right">{row.priority}</TableCell>
                     <TableCell align="right">{row.type}</TableCell>
@@ -457,7 +429,7 @@ export default function EnhancedTable() {
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: (dense ? 33 : 53) * emptyRows,
+                    // height: (dense ? 33 : 53) * emptyRows,
                   }}
                 >
                   <TableCell colSpan={6} />

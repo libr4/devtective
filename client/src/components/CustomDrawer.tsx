@@ -76,19 +76,22 @@ const theme = createTheme({
         <Toolbar />
         <Divider />
         <List>
-          {['Nova Tarefa', 'Buscar Tarefas', 'Filtros', 'Iniciar chat'].map((text, index) => (
+          {[{label:'Nova Tarefa', path:`${projectId}/nova_tarefa`}, 
+          {label:'Buscar Tarefas', path:`/${projectId}/tasks`}, 
+          {label:'Filtros', path:'/'}, 
+          {label:'Iniciar chat', path:'/'}].map((item, index) => (
                 <Link 
                 style={{
                   display:'inline',
                   all:'unset',
                 }}
-                 to={`${projectId}/nova_tarefa`}>
-            <ListItem key={text} disablePadding>
+                 to={item.path}>
+            <ListItem key={item.label} disablePadding>
               <ListItemButton>
                 <ListItemIcon sx={{minWidth:'40px'}}>
                   {icons[index]}
                 </ListItemIcon>
-                <ListItemText sx={{display:{sm:'none', md:'block', xs:'none'}}} primary={text} />
+                <ListItemText sx={{display:{sm:'none', md:'block', xs:'none'}}} primary={item.label} />
               </ListItemButton>
             </ListItem>
                 </Link>

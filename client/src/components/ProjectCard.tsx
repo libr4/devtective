@@ -33,7 +33,16 @@ const StyledCard = ({ title , description, members, projectId}) => (
   <ThemeProvider theme={theme}>
     <Card
       elevation={5}
+      component={Link} 
+      to={`/${projectId}/tasks`}
+
+        // sx={{
+        //   heigh:'100%',
+        //   width:'100%',
+        // }}
       sx={{
+        textDecoration:'none',
+        // all:'unset',
         maxWidth: 345,
         marginRight: 2,
         my:2,
@@ -47,7 +56,14 @@ const StyledCard = ({ title , description, members, projectId}) => (
         },
       }}
     >
-      <CardActionArea component={Link} to={`/${projectId}/tasks`}>
+      <CardActionArea 
+        // component={Link} 
+        // to={`/${projectId}/tasks`}
+        sx={{
+          heigh:'100%',
+          width:'100%',
+        }}
+        >
         <CardMedia
         component={'div'}
           sx={{ height: 0, backgroundColor: '#f0f0f0' }}
@@ -57,6 +73,8 @@ const StyledCard = ({ title , description, members, projectId}) => (
         <CardContent sx={{ padding: 0 }}>
           <Box
             sx={{
+              heigh:'100%',
+              width:'100%',
               background: 'linear-gradient(to bottom, #ffd600 0%, #ffbf00 80%, #ffecb3 100%)',
               padding: '16px',
               borderTopLeftRadius: '4px',
@@ -77,7 +95,9 @@ const StyledCard = ({ title , description, members, projectId}) => (
             </Typography>
             {/* <CardActions> */}
               <IconButton >
-                <EditIcon sx={{color:'white'}}></EditIcon>
+                <EditIcon 
+                
+                  sx={{color:'white'}}></EditIcon>
               </IconButton>
             {/* </CardActions> */}
           </Box>

@@ -165,8 +165,9 @@ const primary = {
         display: 'grid',
         alignItems:'center',
         // mt:10, ml:2,
+        // mb:0, pb:0,
         width:'100%' ,
-        gap:'10px',
+        // gap:'10px',
         // pl:0
       }}
     >
@@ -216,6 +217,7 @@ const primary = {
          <Box
           sx={{
           display:'flex',
+          my:0.5,
             // width:420
           }}
           id="label_filtros"
@@ -223,13 +225,13 @@ const primary = {
           <Button onClick={() => setResult(true)} >
             Resultados&nbsp; 
           </Button>
-            <Divider variant='middle' textAlign='center' orientation='vertical'/>
+            {/* <Divider variant='middle' textAlign='center' orientation='vertical'/> */}
             {/* /&nbsp; */}
           <Button onClick={() => setResult(false)}>
              Outros filtros&nbsp;&nbsp;
           </Button>
         </Box>
-      <Divider></Divider>
+      <Divider ></Divider>
         
       </Box>
 
@@ -242,7 +244,8 @@ const primary = {
       id="filter_container"
       sx={{
         display:'flex',
-        width:'100vw',
+        mt:2,
+        // width:'100vw',
         flex:'wrap'
       }}>
         {/* Container para a primeira coluna, que contém uma label e um input */}

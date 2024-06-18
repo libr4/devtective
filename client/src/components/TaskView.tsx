@@ -210,7 +210,8 @@ export default function TaskView() {
           {!edit.description ? 
               <Typography
                 sx={{
-                  width:'50%',
+                  overflowY:'auto',
+                  width:'70%',
                   wordWrap: 'break-word',
                 }}
               >
