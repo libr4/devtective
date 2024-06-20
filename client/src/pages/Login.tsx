@@ -126,7 +126,7 @@ export default function SignIn() {
             {/* <LockOutlinedIcon /> */}
           </Avatar>
           <Typography component="h1" variant="h5">Entrar</Typography>
-          <Form type='submit' onSubmit={handleSubmit} method='POST' component="form" noValidate sx={{ mt: 1 }}>
+          <Box onSubmit={handleSubmit} method='POST' component="form" noValidate sx={{ mt: 1 }}>
             <TextField
               size='small'
               margin="normal"
@@ -175,7 +175,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
             </Grid>
-          </Form>
+          </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>

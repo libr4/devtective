@@ -52,7 +52,7 @@ export default function NewTask() {
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2, }}>
         <Header title="Tarefas"></Header> 
-        <TaskGrid></TaskGrid>
+        {/* <TaskGrid></TaskGrid> */}
         {/* <Copyright></Copyright> */}
         <Footer></Footer>
     </Box>

@@ -6,7 +6,7 @@ import { IUser } from '../../types/user';
 import mongoose, { Mongoose, ObjectId } from 'mongoose';
 import { IProject } from '../../types/project';
 import bcrypt from 'bcryptjs'
-import { generateCredentials, generateMockTask } from '../../utils/testUtils';
+import { generateCredentials, generateMockTask, getRandomInt } from '../../utils/testUtils';
 import TaskModel, { ITask } from '../../models/TaskModel';
 
 let tokenCookie:string;
@@ -182,6 +182,48 @@ describe("TASKS API", () => {
             expect(response.body._id.toString()).toBe(testTask1._id.toString())
             expect(response.body.taskId).toBe(testTask1.taskId)
         })
+    })
+    describe("DELETE /api/v1/projects/:projectId/tasks", () => {
+        it("should return the amount of deleted tasks", async () => {
+            const nTasks = getRandomInt(5);
+            const tasks = [];
+            for (let i = 0; i < nTasks; i++) {
+                tasks.push({...generateMockTask(), fromProject:testProject2._id});
+            }
+            const createdTasks = await TaskModel.create(tasks);
+            const taskIds = createdTasks.map(el => el.taskId);
+            const response = await request(app)
+                .delete(`/api/v1/projects/${testProject2._id}/tasks`)
+                .send(taskIds)
+                .set('Cookie', tokenCookie)
+
+            expect(response.body.deletedCount).toBe(tasks.length);
+        }, 100000)
+        // it("should return an error message if there's no task with that id from the given project", async () => {
+        //     const response = await request(app)
+        //         .patch(`/api/v1/projects/${testProject2._id}/tasks/30`)
+        //         .send(changes)
+        //         .set('Cookie', tokenCookie)
+
+        //     expect(response.body.messages[0]).toBe("Erro ao encontrar tarefa!");
+        // })
+
+        // it("should return the new changed task but with same _id and taskId", async () => {
+        //     const response = await request(app)
+        //         .patch(`/api/v1/projects/${testProject1._id}/tasks/${testTask1.taskId}`)
+        //         .send(changes)
+        //         .set('Cookie', tokenCookie)
+        //     const query = await TaskModel.find({fromProject:testProject1._id, taskId:testTask1.taskId});
+        //     console.log("query", query)
+
+        //     //changes are expected
+        //     expect(response.body.title).toBe(changes.title)
+        //     expect(response.body.description).toBe(changes.description)
+
+        //     //but taskId should remain the same
+        //     expect(response.body._id.toString()).toBe(testTask1._id.toString())
+        //     expect(response.body.taskId).toBe(testTask1.taskId)
+        // })
     })
 })
 

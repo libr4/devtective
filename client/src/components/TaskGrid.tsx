@@ -240,7 +240,7 @@ interface EnhancedTableToolbarProps {
 }
 
 
-export default function EnhancedTable({selected, setSelected}) {
+export default function EnhancedTable({selected, setSelected, refetchTasks, triggerRefetchTasks}) {
   const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('taskId');
 //   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -253,6 +253,7 @@ export default function EnhancedTable({selected, setSelected}) {
         queryKey:[`all_tasks_${projectId}`],
         queryFn: async () => {
             const response = await axios.get(`/api/v1/projects/${projectId}/tasks`)
+            triggerRefetchTasks(false)
             return response.data;
         }
     })
@@ -263,7 +264,11 @@ export default function EnhancedTable({selected, setSelected}) {
         }
       }, [allTasksQuery.isLoading, allTasksQuery.data]);
 
-
+    useEffect(() => {
+        if (refetchTasks) {
+            allTasksQuery.refetch();
+        }
+    }, [refetchTasks])
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -486,6 +491,11 @@ export default function EnhancedTable({selected, setSelected}) {
           </Table>
         </TableContainer>
         <TablePagination
+          labelRowsPerPage={'Tarefas por página:'}
+          labelDisplayedRows={({ from, to, count }) => { 
+                return `${from}–${to} de ${count !== -1 ? 
+                                            count : 
+                                            `mais do que ${to}`}`; }}
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={rows.length}

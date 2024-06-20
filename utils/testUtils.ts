@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { TASK_TYPES } from './constants';
 
-function getRandomInt(max:number) {
+export function getRandomInt(max:number) {
   return Math.floor(Math.random() * max);
 }
 
