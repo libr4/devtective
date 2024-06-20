@@ -8,7 +8,8 @@ import {
     getTask,
     createTask,
     updateTask,
-    deleteTask
+    deleteTask,
+    deleteManyTasks
 } from '../controllers/taskController.js'
 import { validateIdParam, validateTaskData } from '../middleware/taskValidation.js';
 
@@ -17,7 +18,8 @@ import { validateIdParam, validateTaskData } from '../middleware/taskValidation.
 router.route('/')
     .get(getAllTasks)
     .post(validateTaskData,
-        createTask);
+        createTask)
+    .delete(deleteManyTasks);
 
 router.route('/:taskId')
     .get(validateIdParam, 

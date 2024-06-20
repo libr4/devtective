@@ -22,8 +22,6 @@ const getAllTasks = async (req:ProjectRequest, res:Response) => {
 const createTask = async (req:ProjectRequest, res:Response) => {
     try {
         const fromProject = req.project?._id;
-        console.log('fromProejct', fromProject)
-        console.log('reqbodyfromproject', req.body.fromProject)
         //se o projeto não for especificado, cadastra o projeto da url
         if (!req.body.fromProject) {
             req.body.fromProject = fromProject;
@@ -64,6 +62,18 @@ const deleteTask = async (req:TaskRequest, res:Response) => {
         }
         return res.status(StatusCodes.OK).json({removedTask, msg:"Tarefa deletada com sucesso"})
         
+    } catch (error) {
+        handleError(res, error);
+    }
+}
+
+
+export const deleteManyTasks = async (req:TaskRequest, res:Response) => {
+    try {
+        const taskIdsToDelete = req.body;
+        const fromProject = req.project?._id;
+        const deletedTasks = await Task.deleteMany({taskId:taskIdsToDelete, fromProject})
+        return res.status(200).json(deletedTasks);
     } catch (error) {
         handleError(res, error);
     }

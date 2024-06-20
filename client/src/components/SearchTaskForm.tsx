@@ -12,7 +12,7 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { Button, CircularProgress, Divider, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, Divider, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -30,6 +30,7 @@ import TaskGrid from './TaskGrid';
 import { Link, useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useMutation } from '@tanstack/react-query';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function SearchTaskForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -140,6 +141,9 @@ const primary = {
   const theme = createTheme({
     palette: {
       primary,
+      secondary: {
+        main:'#b71c1c',
+      }
       // secondary: purple,
     },
   });
@@ -153,6 +157,8 @@ const primary = {
   const [deleteClick, setDeleteClick] = useState(false);
   const [results, setResult] = useState(true);
   const [selected, setSelected] = React.useState<readonly number[]>([]);
+  const [refetchTasks, triggerRefetchTasks] = useState(false);
+  const [confirmationDialog, setConfirmationDialog] = useState(false);
 
   function toggleResult() {
     setResult(!results)
@@ -160,11 +166,20 @@ const primary = {
 
   const deleteTasksMutation = useMutation({
     mutationFn:async (data: readonly number[]) => await axios.delete(`/api/v1/projects/${projectId}/tasks`, {data}),
-})
-const handleDeleteTasks = () => {
-    deleteTasksMutation.mutate(selected);
-    setDeleteClick(false)
-}
+    onSuccess:() => triggerRefetchTasks(true),
+  })
+  const handleDeleteTasks = (e:React.FormEvent) => {
+      e.preventDefault();
+      console.log("to be deleted: ", selected)
+      deleteTasksMutation.mutate(selected);
+      setDeleteClick(false);
+      closeDialog();
+      setSelected([]);
+  }
+
+  const closeDialog = () => {
+    setConfirmationDialog(false);
+  }
 
 
   return (
@@ -246,18 +261,41 @@ const handleDeleteTasks = () => {
              Outros filtros&nbsp;&nbsp;
           </Button>
         </Box>
-        <Box sx={{ alignContent:'right'}}>
-          <IconButton onClick={() => console.log(selected)}>
-            <DeleteIcon sx={{color:'#b71c1c'}} fontSize='large'></DeleteIcon>
+        <Box 
+          // component={'form'} 
+          onClick={() => setConfirmationDialog(true)}
+          // onSubmit={handleDeleteTasks} 
+          sx={{ alignContent:'right'}}>
+          <IconButton 
+            // onClick={() => setConfirmationDialog(true)}
+            type='submit'>
+            <DeleteIcon 
+              sx={{color:'#b71c1c'}} fontSize='large'></DeleteIcon>
           </IconButton>
         </Box>
+        <Dialog 
+          component={'form'}
+          onSubmit={handleDeleteTasks}
+          // method='DELETE'
+          onClose={closeDialog}
+          open={confirmationDialog}>
+          <IconButton size='small' onClick={closeDialog} sx={{width:'10%', alignContent:'right', marginLeft:'auto'}}>
+            <CloseIcon></CloseIcon>
+          </IconButton>
+          <DialogContent>
+            {selected.length === 0 ? "Nenhuma tarefa selecionada!" : `Tem certeza que deseja deletar a(s) tarefa(s): ${[...selected].sort((a, b) => a - b).join(', ')}?`}
+          </DialogContent>
+          {!!selected.length && <DialogActions>
+           <Button type='submit' variant='contained' color='secondary'>Deletar</Button>
+          </DialogActions>}
+        </Dialog>
       <Divider ></Divider>
         
       </Box>
 
       {/* <CircularProgress /> */}
 {/* <Link to='/nova_tarefa'>some test</Link> */}
-      {results && <TaskGrid selected={selected} setSelected={setSelected}></TaskGrid>}
+      {results && <TaskGrid selected={selected} setSelected={setSelected} refetchTasks={refetchTasks} triggerRefetchTasks={triggerRefetchTasks}></TaskGrid>}
 
       {/* Container para os filtros */}
       {!results && <Box 
