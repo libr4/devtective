@@ -28,6 +28,8 @@ import "dayjs/locale/pt-br";
 import axios from 'axios';
 import TaskGrid from './TaskGrid';
 import { Link, useParams } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useMutation } from '@tanstack/react-query';
 
 export default function SearchTaskForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -148,11 +150,21 @@ const primary = {
 
   const [prioridade, setPrioridade] = useState("Média");
 
+  const [deleteClick, setDeleteClick] = useState(false);
   const [results, setResult] = useState(true);
+  const [selected, setSelected] = React.useState<readonly number[]>([]);
 
   function toggleResult() {
     setResult(!results)
   }
+
+  const deleteTasksMutation = useMutation({
+    mutationFn:async (data: readonly number[]) => await axios.delete(`/api/v1/projects/${projectId}/tasks`, {data}),
+})
+const handleDeleteTasks = () => {
+    deleteTasksMutation.mutate(selected);
+    setDeleteClick(false)
+}
 
 
   return (
@@ -211,13 +223,16 @@ const primary = {
       <Box
         id="segunda_linha_busca"
         sx={{
-          mt:0.5
+          mt:0.5,
+          display:'flex',
+          justifyContent:'space-between'
         }}
       >
          <Box
           sx={{
           display:'flex',
           my:0.5,
+          flex:1
             // width:420
           }}
           id="label_filtros"
@@ -231,13 +246,18 @@ const primary = {
              Outros filtros&nbsp;&nbsp;
           </Button>
         </Box>
+        <Box sx={{ alignContent:'right'}}>
+          <IconButton onClick={() => console.log(selected)}>
+            <DeleteIcon sx={{color:'#b71c1c'}} fontSize='large'></DeleteIcon>
+          </IconButton>
+        </Box>
       <Divider ></Divider>
         
       </Box>
 
       {/* <CircularProgress /> */}
 {/* <Link to='/nova_tarefa'>some test</Link> */}
-      {results && <TaskGrid></TaskGrid>}
+      {results && <TaskGrid selected={selected} setSelected={setSelected}></TaskGrid>}
 
       {/* Container para os filtros */}
       {!results && <Box 
