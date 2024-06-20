@@ -134,7 +134,7 @@ export default function TaskView() {
           </Select>
               }
             {!edit.type && <Button onClick={() => setEdit({...edit, type:true})}>
-              <CreateIcon fontSize='10px' color='red' sx={{}} />
+              <CreateIcon color='primary' sx={{fontSize:'10px' }} />
             </Button>}
             {edit.type && <Button onClick={() => setEdit({...edit, type:false})}>
               <CloseIcon color='primary' />
@@ -173,7 +173,7 @@ export default function TaskView() {
             </Select>
               }
             {!edit.priority && <Button onClick={() => setEdit({...edit, priority:true})}>
-              <CreateIcon fontSize='10px' color='primary' />
+              <CreateIcon color='primary' sx={{fontSize:'10px' }} />
             </Button>}
             {edit.priority && <Button onClick={() => setEdit({...edit, priority:false})}>
               <CloseIcon color='primary' />
@@ -201,7 +201,11 @@ export default function TaskView() {
           <Typography sx={{ textAlign: 'left', width: LABEL_WIDTH + 35 }}>
             Descrição:&nbsp;&nbsp;
           {!edit.description && <Button onClick={() => setEdit({...edit, description:true})}>
-              <CreateIcon fontSize='10px' color='primary' />
+              <CreateIcon 
+                sx={{
+                  fontSize:'10px', 
+                }} 
+                color='primary' />
             </Button>}
             {edit.description && <Button onClick={() => setEdit({...edit, description:false})}>
               <CloseIcon color='primary' />
@@ -245,7 +249,7 @@ export default function TaskView() {
               </TextField>
               }
             {!edit.assignedTo && <Button onClick={() => setEdit({...edit, assignedTo:true})}>
-              <CreateIcon fontSize='10px' color='primary' />
+              <CreateIcon color='primary' sx={{fontSize:'10px' }} />
             </Button>}
             {edit.assignedTo && <Button onClick={() => setEdit({...edit, assignedTo:false})}>
               <CloseIcon color='primary' />
@@ -264,7 +268,7 @@ export default function TaskView() {
               </TextField>
               }
             {!edit.technology && <Button onClick={() => setEdit({...edit, technology:true})}>
-              <CreateIcon fontSize='10px' color='primary' />
+              <CreateIcon color='primary' sx={{fontSize:'10px'}} />
             </Button>}
             {edit.technology && <Button onClick={() => setEdit({...edit, technology:false})}>
               <CloseIcon color='primary' />
@@ -285,7 +289,7 @@ export default function TaskView() {
         </LocalizationProvider>
          : <Typography>{state.deadline}</Typography>}
          {!edit.deadline && <Button onClick={() => setEdit({...edit, deadline:true})}>
-              <CreateIcon fontSize='10px' color='primary' />
+              <CreateIcon color='primary' sx={{fontSize:'10px'}} />
             </Button>}
             {edit.deadline && <Button onClick={() => setEdit({...edit, deadline:false})}>
               <CloseIcon color='primary' />
@@ -328,7 +332,7 @@ export default function TaskView() {
           </Select>
               }
             {!edit.status && <Button onClick={() => setEdit({...edit, status:true})}>
-              <CreateIcon fontSize='10px' color='primary' />
+              <CreateIcon color='primary' sx={{fontSize:'10px' }} />
             </Button>}
             {edit.status && <Button onClick={() => setEdit({...edit, status:false})}>
               <CloseIcon color='primary' />

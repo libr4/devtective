@@ -46,11 +46,12 @@ export default function NewTask() {
     },
   });
 
+  // const []
+
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', mt:9.5, ml:2, }}>
         <Header title="Encontrar tarefas"></Header> 
         <SearchTaskForm></SearchTaskForm>
-        {/* <Copyright></Copyright> */}
         <Footer></Footer>
     </Box>
   );

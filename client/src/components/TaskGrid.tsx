@@ -21,7 +21,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import Header from './Header';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -135,6 +135,12 @@ const headCells: readonly HeadCell[] = [
     label: 'Título',
   },
   {
+    id: 'taskId',
+    numeric: true,
+    disablePadding: true,
+    label: 'ID',
+  },
+  {
     id: 'priority',
     numeric: true,
     disablePadding: false,
@@ -158,12 +164,12 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: 'Atribuído para',
   },
-  {
-    id: 'lastModification',
-    numeric: true,
-    disablePadding: false,
-    label: 'Última movimentação',
-  },
+//   {
+//     id: 'lastModification',
+//     numeric: true,
+//     disablePadding: false,
+//     label: 'Última movimentação',
+//   },
 ];
 
 
@@ -234,16 +240,15 @@ interface EnhancedTableToolbarProps {
 }
 
 
-export default function EnhancedTable() {
+export default function EnhancedTable({selected, setSelected}) {
   const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('taskId');
-  const [selected, setSelected] = React.useState<readonly number[]>([]);
+//   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = useState<Data[]>([]);
 
     const {projectId} = useParams();
-    console.log("from taskgrid", projectId)
     const allTasksQuery = useQuery({
         queryKey:[`all_tasks_${projectId}`],
         queryFn: async () => {
@@ -271,7 +276,7 @@ export default function EnhancedTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id);
+      const newSelected = rows.map((n) => n.taskId);
       setSelected(newSelected);
       return;
     }
@@ -348,9 +353,13 @@ export default function EnhancedTable() {
         const theme = createTheme({
           palette: {
             primary,
-            // secondary: purple,
           },
         });
+
+    interface DeleteTask {
+        taskIds:number[]
+    }
+    
 
   return (
     <ThemeProvider theme={theme}>
@@ -378,14 +387,13 @@ export default function EnhancedTable() {
               {!allTasksQuery.isLoading && visibleRows.map((row, index) => {
                 const isItemSelected = isSelected(row.taskId);
                 const labelId = `enhanced-table-checkbox-${index}`;
-                console.log("taskId rows", row.taskId)
 
                 return (
                 //   <TableRow
                   <TableRow
-                        component={Link}
-                        to={`/${projectId}/task/${row.taskId}`}
-                        state={visibleRows.filter(el => el.taskId == row.taskId)[0]}
+
+                        onClick={(e) => handleClick(e, row.taskId)}
+
                         hover
                     // onClick={(event) => handleClick(event, row.id)}
                         role="checkbox"
@@ -411,13 +419,52 @@ export default function EnhancedTable() {
                     //   component="th"
                     //   component={Link}
                     //   to='projetos'
+                    // sx={{all:'unset'}}
+                        // component={Link}
+                        // to={`/${projectId}/task/${row.taskId}`}
+                        // state={visibleRows.filter(el => el.taskId == row.taskId)[0]}
                       id={labelId}
                       scope="row"
                       padding="none"
                     >
-                    {/* <Link to='projetos'> */}
+                    <Typography
+                        component={Link}
+                        to={`/${projectId}/task/${row.taskId}`}
+                        state={visibleRows.filter(el => el.taskId == row.taskId)[0]}
+                        sx={{
+                            all:'unset',
+                            textDecoration:'none',
+                        fontColor:`${primary.main}`
+                        }}
+                    >
                       {row.title}
+                    </Typography>
+                    {/* <Link to='projetos'> */}
+                      {/* {row.title} */}
                     {/* </Link> */}
+                    </TableCell>
+                    <TableCell
+                    //   component="th"
+                    //   component={Link}
+                    //   to='projetos'
+                    // sx={{all:'unset'}}
+                    align='right'
+                      id={labelId}
+                      scope="row"
+                      padding="none"
+                    >
+                    <Typography
+                        component={Link}
+                        to={`/${projectId}/task/${row.taskId}`}
+                        state={visibleRows.filter(el => el.taskId == row.taskId)[0]}
+                        sx={{
+                            all:'unset',
+                            textDecoration:'none'
+                        }}
+                        color={primary.main}
+                    >
+                      {row.taskId}
+                    </Typography>
                     </TableCell>
                     <TableCell align="right">{row.priority}</TableCell>
                     <TableCell align="right">{row.type}</TableCell>
