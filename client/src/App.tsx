@@ -29,6 +29,7 @@ import SearchTaskForm from './components/SearchTaskForm';
 import SearchTaskPage from './pages/SearchTaskPage';
 import { Outlet } from 'react-router-dom';
 import Footer from './components/Footer';
+import AppProvider from './context/AppProvider';
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
 
   return (
     <>
+    <AppProvider>
       <CssBaseline />
       <Box sx={{ display: 'flex' }}>
         <CustomAppBar></CustomAppBar>
@@ -46,6 +48,7 @@ function App() {
         {/* <SearchTaskPage></SearchTaskPage> */}
         <Footer></Footer>
       </Box>
+    </AppProvider>
     </>
   )
 }

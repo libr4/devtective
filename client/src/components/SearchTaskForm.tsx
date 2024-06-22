@@ -12,9 +12,9 @@ import TextField from '@mui/material/TextField';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, Divider, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
+import { Autocomplete, Button, CircularProgress, Dialog, DialogActions, DialogContent, Divider, FormControlLabel, MenuItem, Select, Stack, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
@@ -27,10 +27,12 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import "dayjs/locale/pt-br";
 import axios from 'axios';
 import TaskGrid from './TaskGrid';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useMutation } from '@tanstack/react-query';
 import CloseIcon from '@mui/icons-material/Close';
+import { useAppContext } from '../context/AppProvider';
+import DynamicFilter from './DynamicFilter';
 
 export default function SearchTaskForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -44,83 +46,7 @@ export default function SearchTaskForm() {
   const {projectId} = useParams();
   console.log("projectid", projectId)
 
-  const fields = [];
-
-  function DynamicFilter(props:any) {
-
-    let {label, width, selectItens, inputType} = props;
-
-    if ( selectItens == undefined ) {
-      selectItens = [];
-    }
-
-    const [newFilter, setNewFilter] = useState([{id:1}]);
-
-    const handleNewFilter = () => {
-      setNewFilter((newFilter) => [...newFilter, {id:newFilter.length + 1}]);
-    }
-    const handleRemove = (id) => {
-      setNewFilter((newFilter) => newFilter.filter((filter) => filter.id !== id));
-    }
-
-    const filters = newFilter.map((el, index) => {
-      const isFirst = index < 1;
-      return <Box key={el.id}
-        id={"input_atribuido" + el.id}
-          sx={{
-            display:'flex',
-            alignItems:'center'
-          }}
-          >
-            <Typography
-              align='right'
-              sx={
-                {
-                  width:width,
-                }
-              }
-            >
-              {label}:&nbsp;&nbsp;
-            </Typography>
-            {inputType === "date" ?
-            <LocalizationProvider 
-              adapterLocale='pt-br'
-              dateAdapter={AdapterDayjs}>
-                <DatePicker />
-            </LocalizationProvider>
-              :
-              !selectItens.length ? 
-              <TextField size='small'></TextField>
-              :           
-              <Select
-              size='small'
-              defaultValue={selectItens[0]}
-              sx={
-                {
-                  width:'33%'
-                }
-              }
-            >
-            {selectItens.map((item) => {
-              return (
-                <MenuItem key={item} value={item}>
-                  {item}
-                </MenuItem>
-              )
-            })}
   
-            </Select>
-            }
-            {inputType !== "date" &&  <IconButton onClick={isFirst ? handleNewFilter : () => handleRemove(el.id)}>
-              {isFirst ? 
-              <AddIcon></AddIcon> 
-              : <RemoveIcon></RemoveIcon>}
-            </IconButton>}
-          
-          </Box>
-    })
-    return filters;
-  }
 
   const LABEL_WIDTH = 120;
   const LABEL_WIDTH_2 = 90;
@@ -164,10 +90,15 @@ const primary = {
     setResult(!results)
   }
 
+
   const deleteTasksMutation = useMutation({
     mutationFn:async (data: readonly number[]) => await axios.delete(`/api/v1/projects/${projectId}/tasks`, {data}),
     onSuccess:() => triggerRefetchTasks(true),
   })
+
+  const closeDialog = () => {
+    setConfirmationDialog(false);
+  }
   const handleDeleteTasks = (e:React.FormEvent) => {
       e.preventDefault();
       console.log("to be deleted: ", selected)
@@ -177,11 +108,21 @@ const primary = {
       setSelected([]);
   }
 
-  const closeDialog = () => {
-    setConfirmationDialog(false);
-  }
 
 
+  const {state} = useLocation();
+  const {projects, setCurrentProject, currentProject} = useAppContext();
+
+  let project = state || JSON.parse(localStorage.getItem('currentProject') as string);
+
+  useEffect(() => {
+    if (project) {
+      localStorage.setItem('currentProject',JSON.stringify(project));
+      console.log(project)
+      setCurrentProject(project);
+    }
+  }, [project, currentProject])
+  
   return (
   <ThemeProvider theme={theme}>
     <Box 
@@ -199,6 +140,7 @@ const primary = {
       }}
     >
       <Box
+      component={'form'}
         sx={
 
           {
@@ -223,17 +165,31 @@ const primary = {
             Atribuído para:&nbsp;&nbsp;
           </Typography>
         </Box>
-          <TextField
-          placeholder='Nome ou parte do nome'
+        <Stack
           sx={{
-            gridColumn:'span 3',
-            width:'50%'
+            maxWidth:'70%',
+            width:'70%',
           }}
-            size='small'>
-          </TextField>
-          <Button variant='contained'>
-            Buscar
-          </Button>
+        >
+
+        <Autocomplete
+          multiple
+          // disablePortal
+          disableClearable
+          id="combo-box-demo"
+          options={(project || currentProject).memberDetails.map(el => el.name)}
+          // options={['1', '2', '3']}
+          // sx={{ maxWidth: '100%', width: '100%',}}
+          renderInput={(params) => <TextField {...params} size='small' placeholder='Nome(s) do(s) membro(s)'
+          sx={{
+            // gridColumn:'span 3',
+            // width:'90%'
+          }} />}
+        />
+        </Stack>
+        <Button variant='contained'>
+          Buscar
+        </Button>
       </Box>
       <Box
         id="segunda_linha_busca"
@@ -289,12 +245,10 @@ const primary = {
            <Button type='submit' variant='contained' color='secondary'>Deletar</Button>
           </DialogActions>}
         </Dialog>
-      <Divider ></Divider>
+        <Divider ></Divider>
         
       </Box>
 
-      {/* <CircularProgress /> */}
-{/* <Link to='/nova_tarefa'>some test</Link> */}
       {results && <TaskGrid selected={selected} setSelected={setSelected} refetchTasks={refetchTasks} triggerRefetchTasks={triggerRefetchTasks}></TaskGrid>}
 
       {/* Container para os filtros */}
@@ -343,9 +297,7 @@ const primary = {
         }}>
           <DynamicFilter label="Prazo" inputType="date" width={LABEL_WIDTH}></DynamicFilter>
         </Box>
-
-      </Box>
-}
+      </Box>}
     </Box>
     </ThemeProvider>
   );

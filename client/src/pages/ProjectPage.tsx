@@ -14,7 +14,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
 import { Button, CircularProgress, FormControlLabel, MenuItem, Select, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
@@ -28,6 +28,7 @@ import { Form } from 'react-router-dom';
 import ProjectCard from '../components/ProjectCard';
 import Header from '../components/Header';
 import { useQuery } from '@tanstack/react-query';
+import { useAppContext } from '../context/AppProvider';
 
 export function getHello(e) {
     e.preventDefault();
@@ -45,13 +46,14 @@ export async function action({request}) {
 export default function ProjectPage() {
   const [showPassword, setShowPassword] = React.useState(false);
 
+  const {sayHello, setProjects} = useAppContext();
+
+
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
-
-  const [test, setTest] = useState('')
 
   const LABEL_WIDTH = 120;
   const LABEL_WIDTH_2 = 90;
@@ -102,6 +104,13 @@ const primary = {
     }
   })
 
+  useEffect(() => {
+    if(!projectQuery.isLoading) {
+      setProjects(projectQuery?.data)
+    }
+  }, [projectQuery.isLoading])
+  
+
   console.log("proeject query", projectQuery.data)
   if (projectQuery.isLoading) return 
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2 }}>
@@ -130,7 +139,7 @@ const primary = {
       }}
     >
       {projectQuery.data.map((item, index) => {
-        return <ProjectCard key={index} members={item.memberDetails} title={item.name.toUpperCase()} description={item.description} projectId={item._id}></ProjectCard>
+        return <ProjectCard key={index} project={item} title={item.name.toUpperCase()} description={item.description}></ProjectCard>
       })}
       {/* <ProjectCard title="DEVTECTIVE" description="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"></ProjectCard>
       <ProjectCard title="REDIRECT" description={"shablau"}></ProjectCard>

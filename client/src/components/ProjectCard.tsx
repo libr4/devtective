@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardActionArea, CardMedia, CardContent, Typography, ThemeProvider, createTheme, Box, CardActions, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
+import { useAppContext } from '../context/AppProvider';
 // import cover from '../assets/detective.jpg'
 
 const theme = createTheme({
@@ -24,22 +25,24 @@ const theme = createTheme({
   },
 });
 
-function getMemberNames(members) {
-  const memberNames = members.map(item => item.name)
+function getMemberNames(project) {
+  const memberDetails = project.memberDetails;
+  const memberNames = memberDetails.map(item => item.name)
   return memberNames;
 }
 
-const StyledCard = ({ title , description, members, projectId}) => (
+// const {setTest} = useAppContext();
+
+function StyledCard({ title , description, project, }) {
+
+return (
   <ThemeProvider theme={theme}>
     <Card
       elevation={5}
       component={Link} 
-      to={`/${projectId}/tasks`}
+      to={`/${project._id}/tasks`}
+      state={project}
 
-        // sx={{
-        //   heigh:'100%',
-        //   width:'100%',
-        // }}
       sx={{
         textDecoration:'none',
         // all:'unset',
@@ -103,7 +106,7 @@ const StyledCard = ({ title , description, members, projectId}) => (
           </Box>
           <Box sx={{ padding: '16px' }}>
             <Typography color="textSecondary" sx={{width:'100%'}}>
-              {getMemberNames(members).join(', ')}
+              {getMemberNames(project).join(', ')}
             </Typography>
             <Typography variant="body2" color="textSecondary" sx={{ wordWrap: 'break-word' }}>{description}</Typography>
           </Box>
@@ -111,6 +114,6 @@ const StyledCard = ({ title , description, members, projectId}) => (
       </CardActionArea>
     </Card>
   </ThemeProvider>
-);
+)};
 
 export default StyledCard;

@@ -26,10 +26,11 @@ import "dayjs/locale/pt-br";
 import axios from 'axios';
 import { Form, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useAppContext } from '../context/AppProvider';
 
 export function getHello(e) {
     e.preventDefault();
-    console.log(test)
+    // console.log(test)
     return null;
 }
   const dicionario = {
@@ -76,7 +77,8 @@ export default function NewTaskForm({setValidation}) {
     newTaskMutation.mutate(data);
   };
 
-  const [test, setTest] = useState('')
+  // const [test, setTest] = useState('')
+  console.log("this is test value: ", test);
 
   const LABEL_WIDTH = 120;
   const LABEL_WIDTH_2 = 90;
@@ -150,8 +152,8 @@ const primary = {
           <Select
             name='type'
             size='small'
-            value={test}
-            onChange={(e) => {setTest(e.target.value)}}
+            // value={test}
+            // onChange={(e) => {setTest(e.target.value)}}
             defaultValue={tipos[0]}
             sx={
               {
