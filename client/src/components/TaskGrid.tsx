@@ -264,6 +264,10 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
         }
       }, [allTasksQuery.isLoading, allTasksQuery.data]);
 
+    /**após a remoção de uma ou mais tarefas,
+     * é necessário rebuscar as tarefas resultantes
+     * esse useEffect é responsável por isso.
+     */
     useEffect(() => {
         if (refetchTasks) {
             allTasksQuery.refetch();
@@ -418,7 +422,7 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
                         inputProps={{
                           'aria-labelledby': labelId,
                         }}
-                      />
+                        />
                     </TableCell>
                     <TableCell
                     //   component="th"
@@ -439,7 +443,7 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
                         sx={{
                             all:'unset',
                             textDecoration:'none',
-                        fontColor:`${primary.main}`
+                            fontColor:`${primary.main}`
                         }}
                     >
                       {row.title}
