@@ -40,46 +40,6 @@ interface Data {
   lastModification: string;
 }
 
-function createData(
-  taskId: number,
-  id: number,
-  title: string,
-  type: string,
-  assignedTo: string,
-  priority: string,
-  status: string,
-  lastModification: string,
-): Data {
-  return {
-    taskId,
-    id,
-    title,
-    type,
-    assignedTo,
-    priority,
-    status,
-    lastModification,
-  };
-}
-
-// const rows = [
-//   createData(1, 'Cupcake', "teste", "test", "test", "test", "10/10/10"),
-//   createData(2, 'Donut', 452, 25.0, 51, 4.9),
-//   createData(3, 'Eclair', 262, 16.0, 24, 6.0),
-//   createData(4, 'Frozen yoghurt', 159, 6.0, 24, 4.0),
-//   createData(5, 'Gingerbread', 356, 16.0, 49, 3.9),
-//   createData(6, 'Honeycomb', 408, 3.2, 87, 6.5),
-//   createData(7, 'Ice cream sandwich', 237, 9.0, 37, 4.3),
-//   createData(8, 'Jelly Bean', 375, 0.0, 94, 0.0),
-//   createData(9, 'KitKat', 518, 26.0, 65, 7.0),
-//   createData(10, 'Lollipop', 392, 0.2, 98, 0.0),
-//   createData(11, 'Marshmallow', 318, 0, 81, 2.0),
-//   createData(12, 'Nougat', 360, 19.0, 9, 37.0),
-//   createData(13, 'Oreo', 437, 18.0, 63, 4.0),
-// ];
-
-
-
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -164,12 +124,6 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: 'Atribuído para',
   },
-//   {
-//     id: 'lastModification',
-//     numeric: true,
-//     disablePadding: false,
-//     label: 'Última movimentação',
-//   },
 ];
 
 
@@ -235,12 +189,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-}
-
-
-export default function EnhancedTable({selected, setSelected, refetchTasks, triggerRefetchTasks}) {
+export default function EnhancedTable({selected, setSelected, refetchTasks, triggerRefetchTasks, customQuery, setCustomQuery, searchParams}) {
   const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('taskId');
 //   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -250,16 +199,18 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
 
     const {projectId} = useParams();
     const allTasksQuery = useQuery({
-        queryKey:[`all_tasks_${projectId}`],
+        queryKey:[`all_tasks_${projectId}${searchParams}`],
         queryFn: async () => {
-            const response = await axios.get(`/api/v1/projects/${projectId}/tasks`)
-            triggerRefetchTasks(false)
+            const response = await axios.get(`/api/v1/projects/${projectId}/tasks`, (Object.keys(customQuery).length !== 0) ? {params:customQuery} : undefined)
+            triggerRefetchTasks(false);
+            setCustomQuery({});
+            console.log("rsponse data: ", response.data)
             return response.data;
         }
     })
 
     useEffect(() => {
-        if (!allTasksQuery.isLoading && allTasksQuery.data) {
+        if ((!allTasksQuery.isLoading && allTasksQuery.data)) {
           setRows(allTasksQuery.data);
         }
       }, [allTasksQuery.isLoading, allTasksQuery.data]);
@@ -270,6 +221,7 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
      */
     useEffect(() => {
         if (refetchTasks) {
+            console.log("params task grid: ", searchParams)
             allTasksQuery.refetch();
         }
     }, [refetchTasks])
@@ -323,17 +275,6 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
 
   const isSelected = (id: number | string) => selected.indexOf(id as number) !== -1;
 
-
-//   const buffer = allTasksQuery.isLoading ? [] : allTasksQuery?.data;
-//   const rows = [...buffer];
-//   let rows = allTasksQuery?.data || [];
-  
-//   React.useEffect(() => {
-//     if (!allTasksQuery.isLoading) {
-//         rows = allTasksQuery?.data;
-//     }
-//   }, [allTasksQuery.isLoading])
-
   const visibleRows = React.useMemo(
     () =>
       stableSort(rows, getComparator(order, orderBy)).slice(
@@ -342,10 +283,10 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
       ),
     [order, orderBy, page, rowsPerPage, rows],
   );
-    if(allTasksQuery.isLoading) 
-    return <Container sx={{height:'100%', width:'80vw', marginLeft:'auto', marginTop:'auto', marginRight:'auto'}}>
-                <CircularProgress></CircularProgress>
-            </Container>
+    // if(allTasksQuery.isLoading) 
+    // return <Container sx={{height:'100%', marginLeft:'auto', marginTop:'auto', marginRight:'auto'}}>
+    //             <CircularProgress></CircularProgress>
+    //         </Container>
 //   rows = allTasksQuery?.data;
 
 
@@ -425,14 +366,6 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
                         />
                     </TableCell>
                     <TableCell
-                    //   component="th"
-                    //   component={Link}
-                    //   to='projetos'
-                    // sx={{all:'unset'}}
-                        // component={Link}
-                        // to={`/${projectId}/task/${row.taskId}`}
-                        // state={visibleRows.filter(el => el.taskId == row.taskId)[0]}
-                      id={labelId}
                       scope="row"
                       padding="none"
                     >
@@ -448,16 +381,9 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
                     >
                       {row.title}
                     </Typography>
-                    {/* <Link to='projetos'> */}
-                      {/* {row.title} */}
-                    {/* </Link> */}
                     </TableCell>
                     <TableCell
-                    //   component="th"
-                    //   component={Link}
-                    //   to='projetos'
-                    // sx={{all:'unset'}}
-                    align='right'
+                      align='right'
                       id={labelId}
                       scope="row"
                       padding="none"
@@ -484,9 +410,6 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
               })}
               {emptyRows > 0 && (
                 <TableRow
-                  style={{
-                    // height: (dense ? 33 : 53) * emptyRows,
-                  }}
                 >
                   <TableCell colSpan={6} />
                 </TableRow>

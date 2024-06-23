@@ -12,7 +12,11 @@ const getAllTasks = async (req:ProjectRequest, res:Response) => {
     try {
         // Se o projeto não estivesse presente, esse código não chegaria a ser executado
         const projectId = req.project?._id;
-        const allTasks = await Task.find({fromProject:projectId});
+        const query = req.query;
+        query.fromProject = projectId;
+        console.log("query: ", query)
+        const allTasks = await Task.find(query);
+        console.log("tasks: ", allTasks)
         return res.status(StatusCodes.OK).json(allTasks)
     } catch (error) {
         handleError(res, error);
