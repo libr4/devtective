@@ -78,7 +78,7 @@ export default function NewTaskForm({setValidation}) {
   };
 
   // const [test, setTest] = useState('')
-  console.log("this is test value: ", test);
+  // console.log("this is test value: ", test);
 
   const LABEL_WIDTH = 120;
   const LABEL_WIDTH_2 = 90;

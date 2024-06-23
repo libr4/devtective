@@ -14,7 +14,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
 import { Autocomplete, Button, CircularProgress, Dialog, DialogActions, DialogContent, Divider, FormControlLabel, MenuItem, Select, Stack, createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
@@ -27,12 +27,13 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import "dayjs/locale/pt-br";
 import axios from 'axios';
 import TaskGrid from './TaskGrid';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import CloseIcon from '@mui/icons-material/Close';
 import { useAppContext } from '../context/AppProvider';
 import DynamicFilter from './DynamicFilter';
+import FilterContainer from './FilterContainer';
 
 export default function SearchTaskForm() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -74,22 +75,11 @@ const primary = {
     },
   });
 
-  const prioridades = ["Muito Baixa", "Baixa", "Média", "Alta", "Muito Alta"]
-  const status = ["Aberta", "Desenvolvimento", "Teste", "Adiada", "Concluída", "Personalizada" ]
-  const tipos = ["Erro", "Bug", "Requisito", "Funcionalidade", "Atualização", "Personalizada" ]
-
-  const [prioridade, setPrioridade] = useState("Média");
-
   const [deleteClick, setDeleteClick] = useState(false);
   const [results, setResult] = useState(true);
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [refetchTasks, triggerRefetchTasks] = useState(false);
   const [confirmationDialog, setConfirmationDialog] = useState(false);
-
-  function toggleResult() {
-    setResult(!results)
-  }
-
 
   const deleteTasksMutation = useMutation({
     mutationFn:async (data: readonly number[]) => await axios.delete(`/api/v1/projects/${projectId}/tasks`, {data}),
@@ -108,25 +98,115 @@ const primary = {
       setSelected([]);
   }
 
+const { state } = useLocation();
+const { setCurrentProject } = useAppContext();
 
+let initialProject = state || JSON.parse(localStorage.getItem('currentProject') as string);
+const [project, setProject] = useState(initialProject);
 
-  const {state} = useLocation();
-  const {projects, setCurrentProject, currentProject} = useAppContext();
+// Use a ref to control whether to update currentProject
+const updateCurrentProject = useRef(false);
 
-  let project = state || JSON.parse(localStorage.getItem('currentProject') as string);
+useEffect(() => {
+  // Update localStorage when project changes
+  if (project) {
+    localStorage.setItem('currentProject', JSON.stringify(project));
+  }
 
-  useEffect(() => {
-    if (project) {
-      localStorage.setItem('currentProject',JSON.stringify(project));
-      console.log(project)
-      setCurrentProject(project);
+  // Update currentProject only if flag is true
+  if (updateCurrentProject.current) {
+    setCurrentProject(project);
+    // Reset the flag after update
+    updateCurrentProject.current = false;
+  }
+}, [project, setCurrentProject]);
+
+// Function to update project and set the flag
+const handleProjectUpdate = (newProject) => {
+  setProject(newProject);
+  updateCurrentProject.current = true; // Set the flag to update currentProject
+};
+  // useEffect(() => {
+  //   if (project) {
+  //     localStorage.setItem('currentProject',JSON.stringify(project));
+  //     // setCurrentProject(project)
+  //   }
+  // }, [project])
+
+  interface SearchQuery {
+    type?:unknown[]
+    priority?:unknown[]
+    status?:unknown[]
+    technology?:unknown[]
+    deadline?:unknown[]
+    assignedTo?:unknown[]
+  }
+
+  const initialQuery:SearchQuery = {
+    type:[],
+    priority:[],
+    status:[],
+    technology:[],
+    deadline:[],
+    assignedTo:[],
+  }
+  /**O objeto do form pode vir com diferentes chaves
+   * que se referem ao mesmo tipo de valor.
+   * Essa função unifica tais chaves em uma lista 
+   * de valores do mesmo tipo para uma mesma chave
+   */
+  function formToSearchQuery(data:FormDataEntryValue) {
+    const fields = ['type', 'priority', 'status', 'technology', 'deadline'];
+    const query:SearchQuery = {};
+    for(let field of fields) {
+      for (let dynamicFormKey in (data as any)) {
+        if((data[dynamicFormKey] as string).length > 0 && dynamicFormKey.startsWith(field) && data[dynamicFormKey] !== 'Todos' && data[dynamicFormKey] !== 'Todas') {
+          query[field] = query[field] ? 
+            [...query[field], data[dynamicFormKey]] : 
+            [data[dynamicFormKey]];
+        }
+      }
     }
-  }, [project, currentProject])
+    //assignedTo é um campo que recebe valores de uma forma diferente,
+    //inacessível pelo form
+    if(assignedTo.length > 0) query['assignedTo'] = assignedTo;
+    return query;
+  }
+  const [assignedTo, setAssignedTo] = useState<string[]>([]);
+  const [customQuery, setCustomQuery] = useState<SearchQuery>({});
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData) as any;
+    console.log("data: ", data)
+    const query = formToSearchQuery(data);
+    setCustomQuery(query)
+    setResult(true)
+    triggerRefetchTasks(true)
+    setSearchParams(query as Record<string, string[]>)
+    console.log("query: ", query)
+  };
+
+  // const customSearchQuery = useQuery({
+  //   queryKey:['customSearch'],
+  //   queryFn: async () => {
+  //     const response = await axios.get(`/api/v1/projects/${projectId}/tasks`, {params:customQuery})
+  //     setCustomQuery({})
+  //     return response.data;
+  //   },
+  //   enabled:Object.keys(customQuery).length !== 0
+  // })
+
+  console.log("search params: ", searchParams)
   
   return (
   <ThemeProvider theme={theme}>
     <Box 
       id="form_wrapper"
+      component={'form'}
+      onSubmit={handleSubmit}
       sx={{ 
         overflow:'auto',
         // background:'#C8C8C8',
@@ -140,7 +220,9 @@ const primary = {
       }}
     >
       <Box
-      component={'form'}
+        // component={'form'}
+        // method='GET'
+        // onSubmit={handleSubmit}
         sx={
 
           {
@@ -174,20 +256,21 @@ const primary = {
 
         <Autocomplete
           multiple
+          onChange={(e, v) => setAssignedTo([...v])}
+          // value={someValue}
           // disablePortal
           disableClearable
-          id="combo-box-demo"
-          options={(project || currentProject).memberDetails.map(el => el.name)}
-          // options={['1', '2', '3']}
+          // options={(project || currentProject).memberDetails.map(el => el.name)}
+          options={['1', '2', '3']}
           // sx={{ maxWidth: '100%', width: '100%',}}
-          renderInput={(params) => <TextField {...params} size='small' placeholder='Nome(s) do(s) membro(s)'
+          renderInput={(params) => <TextField name='assignedTo' {...params} size='small' placeholder='Nome(s) do(s) membro(s)'
           sx={{
             // gridColumn:'span 3',
             // width:'90%'
           }} />}
         />
         </Stack>
-        <Button variant='contained'>
+        <Button type='submit' variant='contained'>
           Buscar
         </Button>
       </Box>
@@ -249,55 +332,17 @@ const primary = {
         
       </Box>
 
-      {results && <TaskGrid selected={selected} setSelected={setSelected} refetchTasks={refetchTasks} triggerRefetchTasks={triggerRefetchTasks}></TaskGrid>}
+      {results && 
+      <TaskGrid 
+          searchParams={searchParams}
+          selected={selected} setSelected={setSelected} 
+          refetchTasks={refetchTasks} triggerRefetchTasks={triggerRefetchTasks}
+          customQuery={customQuery} setCustomQuery={setCustomQuery}>
+      </TaskGrid>}
 
       {/* Container para os filtros */}
-      {!results && <Box 
-      id="filter_container"
-      sx={{
-        display:'flex',
-        mt:2,
-        // width:'100vw',
-        flex:'wrap'
-      }}>
-        {/* Container para a primeira coluna, que contém uma label e um input */}
-        <Box sx={{
-           flex: 0.4, 
-          display:'flex',
-          flexDirection:'column',
-          alignItems:'stretch',
-          alignContent:'start',
-          // border: '1px solid gray',
-          gap:'10px'
-        }}>
-          <DynamicFilter label="Tipo" width={LABEL_WIDTH} selectItens={tipos}></DynamicFilter>
-          <DynamicFilter label="Andamento" width={LABEL_WIDTH} selectItens={status}></DynamicFilter>
-          {/* <DynamicFilter label="Prazo" inputType="date" width={LABEL_WIDTH}></DynamicFilter> */}
-        </Box>
-        <Box sx={{
-           flex: 0.5, 
-          display:'flex',
-          flexDirection:'column',
-          alignItems:'stretch',
-          alignContent:'start',
-          gap:'10px',
-          // border: '1px solid gray'
-        }}>
-          <DynamicFilter label="Prioridade" width={LABEL_WIDTH_2} selectItens={prioridades}></DynamicFilter>
-          <DynamicFilter label="Tecnologia" width={LABEL_WIDTH_2}></DynamicFilter>
-          </Box>
-        <Box sx={{
-          flex: 0.9, 
-          display:'flex',
-          flexDirection:'column',
-          alignItems:'stretch',
-          alignContent:'start',
-          gap:'10px',
-          // border: '1px solid gray'
-        }}>
-          <DynamicFilter label="Prazo" inputType="date" width={LABEL_WIDTH}></DynamicFilter>
-        </Box>
-      </Box>}
+      {!results && 
+      <FilterContainer LABEL_WIDTH={LABEL_WIDTH} LABEL_WIDTH_2={LABEL_WIDTH_2} />}
     </Box>
     </ThemeProvider>
   );

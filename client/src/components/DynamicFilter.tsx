@@ -36,7 +36,7 @@ import { useAppContext } from '../context/AppProvider';
 
 export default function DynamicFilter(props:any) {
 
-    let {label, width, selectItens, inputType} = props;
+    let {label, width, selectItens, inputType, name} = props;
 
     if ( selectItens == undefined ) {
       selectItens = [];
@@ -51,10 +51,15 @@ export default function DynamicFilter(props:any) {
       setNewFilter((newFilter) => newFilter.filter((filter) => filter.id !== id));
     }
 
+    let fieldName = name;
+
     const filters = newFilter.map((el, index) => {
       const isFirst = index < 1;
+      //Nome do campo do form, sendo modificado para 
+      //possibilitar a extração fácil dos valores de campos iguais
+      name = `${fieldName}_${index}`;
       return <Box key={el.id}
-        id={"input_atribuido" + el.id}
+        id={"input_atribuido_" + el.id}
           sx={{
             display:'flex',
             alignItems:'center'
@@ -74,14 +79,20 @@ export default function DynamicFilter(props:any) {
             <LocalizationProvider 
               adapterLocale='pt-br'
               dateAdapter={AdapterDayjs}>
-                <DatePicker />
+                <DatePicker name={name} />
             </LocalizationProvider>
               :
               !selectItens.length ? 
-              <TextField size='small'></TextField>
+              <TextField 
+            //   onChange={(e, v) => setSearch({...search, label:v})} 
+              name={name}
+              size='small'></TextField>
               :           
               <Select
               size='small'
+              name={name}
+            //   onChange={(e, v) => setSearch({...search, [label]:[...(search?.label && []), v]})}
+            //   onChange={(e, v) => setSearch({...search, [e.target.name]:[...search[e.target.name], e.target.value]}) }
               defaultValue={selectItens[0]}
               sx={
                 {
