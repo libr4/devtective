@@ -13,7 +13,6 @@ import mongoose from "mongoose";
  */
 export const validateProjectIdParam = async (req:ProjectRequest, res:Response, next:NextFunction) => {
     const {projectId} = req.params;
-    console.log("projectid: ", projectId)
     const validationError = new ValidationError(["Projeto não identificado ou não existe!"])
     try {
         let project =  await ProjectModel.findById(projectId);

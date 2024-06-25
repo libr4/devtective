@@ -15,7 +15,9 @@ const errorHandlerMiddleware:ErrorRequestHandler = (err, req, res, next) => {
 }
 
 export function handleError(res:Response, error:any) {
-    console.log(error);
+    if (process.env.NODE_ENV === "development") {
+        console.log(error);
+    }
     const genericMessage = "Ocorreu um erro. Tente mais tarde!";
     const statusCode = error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
     let messages : string[];
@@ -30,8 +32,6 @@ export function handleError(res:Response, error:any) {
     }
 
     let response : ErrorResponse = {messages}
-    console.log("passou aqui")
-    console.log(messages)
     // const messages = { messages:(error.messages || (error.message ? [error.message] : false) || [ genericMessage ])};
     return res.status(statusCode).json(response);
 }

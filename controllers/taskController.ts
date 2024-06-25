@@ -14,9 +14,7 @@ const getAllTasks = async (req:ProjectRequest, res:Response) => {
         const projectId = req.project?._id;
         const query = req.query;
         query.fromProject = projectId;
-        console.log("query: ", query)
         const allTasks = await Task.find(query);
-        console.log("tasks: ", allTasks)
         return res.status(StatusCodes.OK).json(allTasks)
     } catch (error) {
         handleError(res, error);

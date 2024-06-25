@@ -24,8 +24,6 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'))
 }
 app.get('/api/hello', (req:Request, res:Response) => {
-    console.log(req.body)
-    console.log("query", req.query)
     return res.json({text:'Hello!'})
 })
 app.use('/api/v1/projects', validateJWT, authenticateUser, projectRouter)

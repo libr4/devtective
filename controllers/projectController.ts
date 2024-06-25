@@ -43,7 +43,6 @@ const projectWithMemberNamesQuery = (userId:string) => [
 const getAllProjects = async (req:UserRequest, res:Response) => {
     try {
         const userId = req.user?._id as string;
-        console.log("projectcontroller", req.user)
         // const allProjects = await ProjectModel.find({members:userId});
 
         const projectsWithMemberNames = await ProjectModel.aggregate(projectWithMemberNamesQuery(userId));
@@ -78,9 +77,7 @@ const updateProject = async (req:ProjectRequest, res:Response) => {
     try {
         const project = req.project as IProject;
         const projectId = req.params.projectId;
-        console.log("project:", project);
         let updatedProject:IProject = await ProjectModel.findOneAndUpdate({_id:projectId}, projectChanges, {new:true}) as IProject;
-        console.log("updatedProject", updatedProject)
         if (!updatedProject) throw new NotFoundError(['Projeto não encontrado!']);
         return res.status(StatusCodes.OK).json(updatedProject);
     } catch (error) {
@@ -92,7 +89,6 @@ const updateProject = async (req:ProjectRequest, res:Response) => {
 
 const deleteProject = async (req:ProjectRequest, res:Response) => {
     try {
-        console.log("params", req.params.projectId);
         const removedProject = await ProjectModel.findOneAndDelete({_id:req.params.projectId}) as IProject;
         if(!removedProject) {
             throw new NotFoundError(['Tarefa não encontrada!']);

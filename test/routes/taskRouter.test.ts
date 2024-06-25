@@ -42,11 +42,11 @@ beforeAll(async () => {
     const hashedPassword = await bcrypt.hash(credentials.password, salt);
 
     user = await UserModel.create({...credentials, password:hashedPassword})
-    console.log("user", user)
+    // console.log("user", user)
 
     const loginResponse = await request(app).post('/api/v1/auth/login')
         .send(credentials)
-        console.log("loginresponse", loginResponse.body)
+        // console.log("loginresponse", loginResponse.body)
     tokenCookie = loginResponse.headers['set-cookie']; // Extract cookie from login response
     
 
@@ -172,7 +172,7 @@ describe("TASKS API", () => {
                 .send(changes)
                 .set('Cookie', tokenCookie)
             const query = await TaskModel.find({fromProject:testProject1._id, taskId:testTask1.taskId});
-            console.log("query", query)
+            // console.log("query", query)
 
             //changes are expected
             expect(response.body.title).toBe(changes.title)
@@ -198,7 +198,7 @@ describe("TASKS API", () => {
                 .set('Cookie', tokenCookie)
 
             expect(response.body.deletedCount).toBe(tasks.length);
-        }, 100000)
+        })
         // it("should return an error message if there's no task with that id from the given project", async () => {
         //     const response = await request(app)
         //         .patch(`/api/v1/projects/${testProject2._id}/tasks/30`)
