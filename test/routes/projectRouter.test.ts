@@ -78,7 +78,7 @@ describe("PROJECT API", () => {
             .post('/api/v1/projects')
             .send({
                 name:"Test Project",
-                members:[]
+                members:[user._id]
             })
             .set('Cookie', tokenCookie)
         const parsedRes = JSON.parse(response.text);

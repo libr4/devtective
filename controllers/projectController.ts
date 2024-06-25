@@ -57,7 +57,8 @@ const createProject = async (req:UserRequest, res:Response) => {
     try {
         const userId = req.user?._id as string;
         req.body.createdBy = userId;
-        req.body.members = [userId, ...req.body.members];
+        if (!req.body.members.includes(userId))
+            req.body.members = [userId, ...req.body.members];
         const project = await ProjectModel.create(req.body);
         return res.status(StatusCodes.CREATED).json(project);
     } catch (error) {

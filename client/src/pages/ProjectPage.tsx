@@ -29,6 +29,7 @@ import ProjectCard from '../components/ProjectCard';
 import Header from '../components/Header';
 import { useQuery } from '@tanstack/react-query';
 import { useAppContext } from '../context/AppProvider';
+import { handle } from 'express/lib/router';
 
 export function getHello(e) {
     e.preventDefault();
@@ -43,10 +44,19 @@ export async function action({request}) {
   return null;
 }
 
+const CARD_ID_PREFIX = 'card_'
+
 export default function ProjectPage() {
+  
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const {sayHello, setProjects} = useAppContext();
+
+  const {sayHello, setProjects, setCurrentScreen, setCurrentUser, 
+    cardClicked, setCardClicked,
+    clickedElement, setClickedElement
+  
+  } = useAppContext();
+  setCurrentScreen('projects')
 
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -73,11 +83,6 @@ const primary = {
     },
   });
 
-  const prioridades = ["Muito Baixa", "Baixa", "Média", "Alta", "Muito Alta"]
-  const status = ["Aberta", "Desenvolvimento", "Teste", "Adiada", "Concluída", "Personalizada" ]
-  const tipos = ["Erro", "Bug", "Requisito", "Funcionalidade", "Atualização", "Personalizada" ]
-
-  const [prioridade, setPrioridade] = useState("Média");
 
   const initialState = {
     type:'',
@@ -90,11 +95,6 @@ const primary = {
     deadline:'',
   }
 
-  
-
-
-  // const [formContent, setFormContent] = useState(initialState);
-
   const projectQuery = useQuery({
     queryKey:['all_projects'],
     queryFn: async () => {
@@ -104,14 +104,38 @@ const primary = {
     }
   })
 
+  const currentUserQuery = useQuery({
+    queryKey:['current-user'],
+    queryFn: async () => {
+      const response = await axios.get('/api/v1/users/current-user')
+      console.log("cuser ", response.data)
+      setCurrentUser(response.data)
+      
+      return response.data;
+    }
+  })
+
+
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (clickedElement && !clickedElement.current.contains(event.target)) {
+        setClickedElement(null)
+        setCardClicked('');
+        console.log(clickedElement)
+      }
+    };
+    document.addEventListener('click', handleClickOutside, true)
+    return () => {document.removeEventListener('click', handleClickOutside, true)}
+  } , [clickedElement])
+
   useEffect(() => {
     if(!projectQuery.isLoading) {
       setProjects(projectQuery?.data)
     }
   }, [projectQuery.isLoading])
-  
 
-  console.log("proeject query", projectQuery.data)
+  
   if (projectQuery.isLoading) return 
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2 }}>
     <Box sx={{display: 'flex', flexWrap: 'wrap',  mt:10, ml:10 }}>
@@ -139,7 +163,8 @@ const primary = {
       }}
     >
       {projectQuery.data.map((item, index) => {
-        return <ProjectCard key={index} project={item} title={item.name.toUpperCase()} description={item.description}></ProjectCard>
+        console.log("itemid: ", item._id)
+        return <ProjectCard id={CARD_ID_PREFIX + item._id} key={item._id} projectKey={item._id} project={item} title={item.name.toUpperCase()} description={item.description}></ProjectCard>
       })}
       {/* <ProjectCard title="DEVTECTIVE" description="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"></ProjectCard>
       <ProjectCard title="REDIRECT" description={"shablau"}></ProjectCard>

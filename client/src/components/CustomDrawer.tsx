@@ -9,24 +9,79 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
 import AddIcon from '@mui/icons-material/Add';
 import CreateIcon from '@mui/icons-material/Create';
 import SearchIcon from '@mui/icons-material/Search';
+import DeleteIcon from '@mui/icons-material/Delete';
 // import '../App.css'
 import React from 'react'
 import { ThemeProvider } from '@emotion/react';
 import { Typography, createTheme } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
+import { useAppContext } from '../context/AppProvider';
+import { GiSettingsKnobs } from 'react-icons/gi';
 
 
 export default function CustomDrawer() {
-  const color = '#00796b'
+  const {projectId} = useParams();
+  const {currentScreen, cardClicked} = useAppContext();
+
+  const tasksMenu = [
+    {
+      label:'Nova Tarefa', 
+      path:`${projectId}/nova_tarefa`, 
+      icon:<CreateIcon color='primary' />
+    }, 
+    {
+      label:'Buscar Tarefas', 
+      path:`/${projectId}/tasks`, 
+      icon:<SearchIcon color='primary' /> 
+    }, 
+    {
+      label:'Filtros', 
+      path:'/', 
+      icon:<InboxIcon color='primary' />
+    }, 
+    {
+      label:'Iniciar chat', 
+      path:'/', 
+      icon:<MailIcon color='primary' />
+    }
+  ]
+
+  const projectsMenu = [
+    {label:'Novo Projeto', path:`novo-projeto`, disabled:false, icon:<AddIcon></AddIcon>}, 
+    {label:'Alterar', path:cardClicked ? `/${cardClicked}/alterar`: '#', disabled: cardClicked == '', icon:<CreateIcon></CreateIcon>}, 
+    {label:'Duplicar', path:cardClicked ? `/${cardClicked}/duplicar`: '#', disabled: cardClicked == '', icon: <InboxIcon></InboxIcon>}, 
+    {label:'Deletar', path:cardClicked ? `/${cardClicked}/deletar`: '#', disabled: cardClicked == '', icon:<DeleteIcon></DeleteIcon>}
+  ]
+  
+  const menus = {
+    projects:projectsMenu,
+    tasks:tasksMenu
+  }
+    const color = '#00796b';
     const icons = [
                     <CreateIcon color='primary' />, 
                     <SearchIcon color='primary'/>, 
                     <InboxIcon color='primary'/>, 
                     <MailIcon color='primary'/>
                   ];
+
+    const secondMenu = [
+      { 
+        label: "Novo Grupo",
+        icon: <AddIcon></AddIcon>
+      }, 
+      {
+        label: "Modo Jogo",
+        icon: <VideogameAssetIcon></VideogameAssetIcon>
+      }, 
+      {
+        label: "Configurações",
+        icon:<GiSettingsKnobs />
+      },]
 
   const drawerWidth = 180;
 
@@ -44,7 +99,6 @@ const theme = createTheme({
   },
 });
 
-  const {projectId} = useParams();
 
   return (
     <>
@@ -76,10 +130,7 @@ const theme = createTheme({
         <Toolbar />
         <Divider />
         <List>
-          {[{label:'Nova Tarefa', path:`${projectId}/nova_tarefa`}, 
-          {label:'Buscar Tarefas', path:`/${projectId}/tasks`}, 
-          {label:'Filtros', path:'/'}, 
-          {label:'Iniciar chat', path:'/'}].map((item, index) => (
+          {(menus[currentScreen]).map((item, index) => (
                 <Link 
                 style={{
                   display:'inline',
@@ -87,9 +138,9 @@ const theme = createTheme({
                 }}
                  to={item.path}>
             <ListItem key={item.label} disablePadding>
-              <ListItemButton>
+              <ListItemButton disabled={item?.disabled}>
                 <ListItemIcon sx={{minWidth:'40px'}}>
-                  {icons[index]}
+                  {item.icon}
                 </ListItemIcon>
                 <ListItemText sx={{display:{sm:'none', md:'block', xs:'none'}}} primary={item.label} />
               </ListItemButton>
@@ -99,14 +150,14 @@ const theme = createTheme({
         </List>
         <Divider />
         <List>
-          {["Configurações"].map((text, index) => (
-            <ListItem key={text} disablePadding>
+          {secondMenu.map((item, index) => (
+            <ListItem key={item.label} disablePadding>
               {/* <ListItemButton> */}
               <ListItemButton>
                 <ListItemIcon sx={{minWidth:'40px'}}>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {item.icon}
                 </ListItemIcon>
-                <ListItemText sx={{display:{sm:'none', md:'block', xs:'none'}}} primary={text} />
+                <ListItemText sx={{display:{sm:'none', md:'block', xs:'none'}}} primary={item.label} />
               </ListItemButton>
             </ListItem>
           ))}

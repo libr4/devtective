@@ -8,7 +8,6 @@ import { USER_ROLES } from "../utils/constants.js";
 export const validateUserIdParam = async (req:UserRequest, res:Response, next:NextFunction) => {
     const {userId} = req.params;
     const validationError = new ValidationError(["Usuário não identificado ou não encontrado!"])
-    console.log("userId", userId)
     try {
         let user =  await UserModel.findById(userId);
         if(!user) {
