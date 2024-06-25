@@ -8,7 +8,6 @@ import { UserRequest } from "../types/user.js";
 
 export const validateJWT = (req:UserRequest, res:Response, next:NextFunction) => {
     const validationError = new ValidationError(["Usuário não logado!"]);
-    console.log("VALIDATEJWT", req.cookies?.token)
     if (!req.cookies?.token) {
         return handleError(res, validationError);
     }

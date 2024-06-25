@@ -134,7 +134,6 @@ Por fim, inclui a task na request para possível manipulação nos próximos mid
 ou controladores */
 export const validateIdParam = async (req:TaskRequest, res:Response, next:NextFunction) => {
     const {taskId} = req.params;
-    console.log("req.params", req.params)
     try {
         const projectId = req.project?._id;
         if(!projectId) {

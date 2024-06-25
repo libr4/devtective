@@ -24,11 +24,11 @@ beforeAll(async () => {
     const hashedPassword = await bcrypt.hash(credentials.password, salt);
 
     user = await UserModel.create({...credentials, password:hashedPassword})
-    console.log("user", user)
+    // console.log("user", user)
 
     const loginResponse = await request(app).post('/api/v1/auth/login')
         .send(credentials)
-        console.log("loginresponse", loginResponse.body)
+        // console.log("loginresponse", loginResponse.body)
     tokenCookie = loginResponse.headers['set-cookie']; // Extract cookie from login response
     
 
