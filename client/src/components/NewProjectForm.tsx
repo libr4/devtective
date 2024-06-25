@@ -87,7 +87,6 @@ export default function NewProjectForm({setValidation}) {
     // if (requiredError.length) return setValidation(`Preencha o(s) campos: ${requiredError.join(', ')}`)
     data.members = members;
     data.leader = leaders;
-    console.log(data)
     newProjectMutation.mutate(data);
   };
 
@@ -130,8 +129,6 @@ const primary = {
 
   const [members, setMembers] = useState<string[]>([]);
   const [leaders, setLeaders] = useState<string[]>([]);
-
-  console.log("newProjectMutation", currentUserQuery.data)
 
   return (
 

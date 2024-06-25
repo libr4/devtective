@@ -62,16 +62,20 @@ export default function NewTaskForm({setValidation}) {
   }
   const navigate = useNavigate();
   const {projectId} = useParams();
+
+  const memberDetails = JSON.parse(localStorage.getItem('currentProject') as string).memberDetails;
+
   const newTaskMutation = useMutation({
     mutationFn: async (data:NewTask) => await axios.post(`/api/v1/projects/${projectId}/tasks`, data),
     onSuccess:(data) => navigate(`/${projectId}/task/${data?.data?.taskId}`, {state:data.data}),
   })
 
+
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const data:NewTask = Object.fromEntries(formData);
-    delete data['assignedTo'];
     // const requiredError = validateRequired(data);
     // if (requiredError.length) return setValidation(`Preencha o(s) campos: ${requiredError.join(', ')}`)
     newTaskMutation.mutate(data);
@@ -327,12 +331,38 @@ const primary = {
           >
             Atribuído para:&nbsp;&nbsp;
           </Typography>
-          <TextField 
+          {(!memberDetails.length) ?
+          <Typography>
+            Aguarde...
+          </Typography>
+          :
+          <Select
+            name='assignedTo'
+            size='small'
+            // value={test}
+            // onChange={(e) => {setTest(e.target.value)}}
+            defaultValue={''}
+            sx={
+              {
+                width:'50%'
+              }
+            }
+          >
+          {memberDetails.map((item, index) => {
+            return (
+              <MenuItem key={index} value={item?._id}>
+                {item?.name}
+              </MenuItem>
+            )
+          })}
+
+          </Select>}
+          {/* <TextField 
             name='assignedTo'
             size='small'
             sx={{
               width:'50%'
-            }}/>
+            }}/> */}
         </Box>
         <Box
           id="input_tecnologia"

@@ -189,7 +189,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
-export default function EnhancedTable({selected, setSelected, refetchTasks, triggerRefetchTasks, customQuery, setCustomQuery, searchParams}) {
+export default function EnhancedTable({selected, setSelected, refetchTasks, triggerRefetchTasks, customQuery, setCustomQuery, searchParams, memberDetails}) {
   const [order, setOrder] = React.useState<Order>('desc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('taskId');
 //   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -204,7 +204,6 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
             const response = await axios.get(`/api/v1/projects/${projectId}/tasks`, (Object.keys(customQuery).length !== 0) ? {params:customQuery} : undefined)
             triggerRefetchTasks(false);
             setCustomQuery({});
-            console.log("rsponse data: ", response.data)
             return response.data;
         }
     })
@@ -221,7 +220,6 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
      */
     useEffect(() => {
         if (refetchTasks) {
-            console.log("params task grid: ", searchParams)
             allTasksQuery.refetch();
         }
     }, [refetchTasks])
@@ -283,10 +281,10 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
       ),
     [order, orderBy, page, rowsPerPage, rows],
   );
-    // if(allTasksQuery.isLoading) 
-    // return <Container sx={{height:'100%', marginLeft:'auto', marginTop:'auto', marginRight:'auto'}}>
-    //             <CircularProgress></CircularProgress>
-    //         </Container>
+    if(allTasksQuery.isLoading) 
+    return <Container sx={{height:'100%', marginLeft:'auto', marginTop:'auto', marginRight:'auto'}}>
+                <CircularProgress></CircularProgress>
+            </Container>
 //   rows = allTasksQuery?.data;
 
 
@@ -394,7 +392,13 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
                         state={visibleRows.filter(el => el.taskId == row.taskId)[0]}
                         sx={{
                             all:'unset',
-                            textDecoration:'none'
+                            textDecoration:'none',
+                            '&:hover': {
+                                // transition: 'transform 0.3s, box-shadow 0.3s',
+                                // transform: 'scale(1.03)',
+                                // boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+                                color:'primary',
+                                },
                         }}
                         color={primary.main}
                     >
@@ -404,7 +408,7 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
                     <TableCell align="right">{row.priority}</TableCell>
                     <TableCell align="right">{row.type}</TableCell>
                     <TableCell align="right">{row.status}</TableCell>
-                    <TableCell align="right">{row.assignedTo || "Ninguém"}</TableCell>
+                    <TableCell align="right">{(memberDetails?.filter(el => el._id === row.assignedTo))[0]?.name || "Ninguém"}</TableCell>
                   </TableRow>
                 );
               })}

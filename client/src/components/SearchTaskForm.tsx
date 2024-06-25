@@ -103,6 +103,7 @@ const { setCurrentProject } = useAppContext();
 
 let initialProject = state || JSON.parse(localStorage.getItem('currentProject') as string);
 const [project, setProject] = useState(initialProject);
+const [memberDetails, setMemberDetails] = useState(initialProject?.memberDetails);
 
 // Use a ref to control whether to update currentProject
 const updateCurrentProject = useRef(false);
@@ -337,7 +338,9 @@ const handleProjectUpdate = (newProject) => {
           searchParams={searchParams}
           selected={selected} setSelected={setSelected} 
           refetchTasks={refetchTasks} triggerRefetchTasks={triggerRefetchTasks}
-          customQuery={customQuery} setCustomQuery={setCustomQuery}>
+          customQuery={customQuery} setCustomQuery={setCustomQuery}
+          memberDetails={memberDetails}
+          >
       </TaskGrid>}
 
       {/* Container para os filtros */}
