@@ -22,6 +22,7 @@ import ExampleTable from './components/ExampleTable.js';
 import TaskPage from './pages/TaskPage.js';
 import TaskView from './components/TaskView.js';
 import TaskViewPage from './pages/TaskViewPage.js';
+import NewProjectPage from './pages/NewProjectPage.js';
 
 const root = document.getElementById('root') as HTMLElement;
 
@@ -50,10 +51,15 @@ const router = createBrowserRouter([
   {
     path:'projetos',
     element:<ProjectPage />,
-    // children:[
+    children:[
 
-    // ]
+    ]
     // action:registerAction,
+  },
+  {
+    path:'novo-projeto',
+    element:<NewProjectPage />,
+    // action:action,
   },
   {
     path:':projectId/nova_tarefa',

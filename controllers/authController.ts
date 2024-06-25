@@ -13,7 +13,7 @@ import { UserRequest } from '../types/user.js';
 const login = async (req:UserRequest, res:Response) => {
     try {
         const user = await User.findOne({username:req.body.username});
-        const isValidUser = user && await comparePassword(req.body.password, user.password);
+        const isValidUser = user && await comparePassword(req.body.password, user.password as string);
         if (!isValidUser) {
             throw new UnauthenticatedError("Credenciais inválidas")
         }

@@ -5,7 +5,7 @@ export interface IUser extends Document {
     _id:mongoose.Types.ObjectId,
     username: string,
     email: string,
-    password: string, // Hashed password
+    password?: string, // Hashed password
     role: USER_ROLES, // e.g., "admin", "developer", "manager"
     name: string,
     lastName: string,

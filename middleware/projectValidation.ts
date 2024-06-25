@@ -29,19 +29,21 @@ export const validateProjectIdParam = async (req:ProjectRequest, res:Response, n
 
 const MAX_DESCRIPTION = 3000;
 export const validateProjectInput = handleValidationErrors([
-    param('projectId')
-        .notEmpty().withMessage('O projeto deve ser informado')
-        .custom(async (projectId) => {
-            const project = await ProjectModel.findById(projectId);
-            if (!project) {
-                console.log("projeto não encontrado")
-                // throw new Error('projeto não encontrado!!')
-            }
-
-            return project;
-        }).withMessage("Projeto não encontrado"),
+    // param('projectId')
+    //     .notEmpty().withMessage('O projeto deve ser informado')
+    //     .custom(async (projectId) => {
+    //         const project = await ProjectModel.findById(projectId);
+    //         if (!project) {
+    //             console.log("projeto não encontrado")
+    //             throw new Error('projeto não encontrado!!')
+    //         }
+    //         return project;
+    //     }).withMessage("Projeto não encontrado"),
     body('name')
         .notEmpty().withMessage('O nome do projeto é obrigatório'),
     body('description')
         .isLength({max:MAX_DESCRIPTION}).withMessage(`A descrição deve ter no máximo ${MAX_DESCRIPTION} caracteres`),    
+    body('members').isArray().withMessage('O campo membros deve ser uma lista'),
+    //By now, it's possible that a project doesn't have a leader.
+    // body('leader').notEmpty().withMessage('Informe ao menos um líder para o projeto!'),
 ])

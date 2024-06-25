@@ -8,6 +8,8 @@ export interface IProject extends Document {
     status: string;
     members:mongoose.Types.ObjectId[];
     url: string;
+    start: string;
+    end: string;
     // owner: mongoose.Types.ObjectId;
     createdBy: mongoose.Types.ObjectId;
     leader:mongoose.Types.ObjectId[];

@@ -14,41 +14,49 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
 import { FormControlLabel, createTheme } from '@mui/material';
 import Header from '../components/Header';
-import TaskExample from '../components/NewTaskForm';
 import { ThemeProvider } from '@emotion/react';
 import { Copyright } from './Login';
 import Footer from '../components/Footer';
 import axios from 'axios';
-import SearchTaskForm from '../components/SearchTaskForm';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { useAppContext } from '../context/AppProvider';
+import NewTaskForm from '../components/NewTaskForm';
+import { useMutation } from '@tanstack/react-query';
+import { useState } from 'react';
+import NewProjectForm from '../components/NewProjectForm';
 
 export default function NewTask() {
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const {setCurrentScreen} = useAppContext();
-  setCurrentScreen('tasks')
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
 
   const primary = {
     main: '#9b111e',
-    light: '#42a5f5',
-    dark: '#1565c0',
-    contrastText: '#fff',
+    // light: '#42a5f5',
+    // dark: '#1565c0',
+    // contrastText: '#fff',
   };
 
   const theme = createTheme({
     palette: {
       primary,
+      // secondary: purple,
     },
   });
 
-  // const []
+
+  const [validation, setValidation] = useState('');
+
+  
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', mt:9.5, ml:2, }}>
-        <Header title="Encontrar tarefas"></Header> 
-        <SearchTaskForm></SearchTaskForm>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2, }}>
+        <Header validation={validation} title="Novo Projeto"></Header> 
+        <NewProjectForm setValidation={setValidation}></NewProjectForm>
+        {/* <Copyright></Copyright> */}
         <Footer></Footer>
     </Box>
   );

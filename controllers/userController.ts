@@ -14,7 +14,11 @@ import { USER_ROLES } from '../utils/constants.js';
 const getAllUsers= async (req:Request, res:Response) => {
     try {
         const allUsers = await User.find({});
-        return res.status(StatusCodes.OK).json(allUsers);
+        const usersWithoutPassword = allUsers.map(el => {
+            delete el.password
+            return el;
+        });
+        return res.status(StatusCodes.OK).json(usersWithoutPassword);
     } catch (error) {
         handleError(res, error);
     }

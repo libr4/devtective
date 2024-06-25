@@ -24,6 +24,8 @@ const ProjectSchema = new mongoose.Schema<IProject>({
     type:mongoose.Schema.Types.ObjectId,
     ref: "User",
   }],
+  start:String,
+  end:String,
   createdAt: Date,
   updatedAt: Date,   
 },
