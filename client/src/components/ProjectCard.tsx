@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardActionArea, CardMedia, CardContent, Typography, ThemeProvider, createTheme, Box, CardActions, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppProvider';
 import { useRef } from 'react';
 import styles from './styles/ProjectCard.module.css';
@@ -43,6 +43,8 @@ function StyledCard({ id, title , description, project, projectKey, }) {
 
   const {cardClicked, setCardClicked, setClickedElement} = useAppContext();
   const isCardClicked = (cardClicked === projectKey);
+
+  const navigate = useNavigate();
 return (
   <ThemeProvider theme={theme}>
     <Card
@@ -118,9 +120,11 @@ return (
             </Typography>
             {/* <CardActions> */}
               <IconButton
-              component={Link}
-              to={`/${project._id}/alterar`}
-              
+                // component={Link}
+                // to={`/${project._id}/alterar`}
+                onClick={() => {
+                  navigate(`/${project._id}/alterar`)
+                }}
               >
                 <EditIcon 
                 

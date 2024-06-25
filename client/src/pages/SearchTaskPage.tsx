@@ -24,11 +24,13 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAppContext } from '../context/AppProvider';
 
-export default function NewTask() {
+export default function SearchTaskPage() {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const {setCurrentScreen} = useAppContext();
-  setCurrentScreen('tasks')
+  useEffect(() => {
+    setCurrentScreen('tasks')
+  }, [])
 
   const primary = {
     main: '#9b111e',

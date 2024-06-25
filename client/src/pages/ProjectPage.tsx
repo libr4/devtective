@@ -31,19 +31,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useAppContext } from '../context/AppProvider';
 import { handle } from 'express/lib/router';
 
-export function getHello(e) {
-    e.preventDefault();
-    console.log(test)
-    return null;
-}
-
-export async function action({request}) {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  console.log(data)
-  return null;
-}
-
 const CARD_ID_PREFIX = 'card_'
 
 export default function ProjectPage() {
@@ -56,7 +43,10 @@ export default function ProjectPage() {
     clickedElement, setClickedElement
   
   } = useAppContext();
-  setCurrentScreen('projects')
+
+  useEffect(() => {
+    setCurrentScreen('projects')
+  }, [])
 
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -99,7 +89,6 @@ const primary = {
     queryKey:['all_projects'],
     queryFn: async () => {
       const response = await axios.get('/api/v1/projects')
-      console.log(response.data)
       return response.data;
     }
   })
@@ -108,7 +97,6 @@ const primary = {
     queryKey:['current-user'],
     queryFn: async () => {
       const response = await axios.get('/api/v1/users/current-user')
-      console.log("cuser ", response.data)
       setCurrentUser(response.data)
       
       return response.data;
@@ -122,7 +110,6 @@ const primary = {
       if (clickedElement && !clickedElement.current.contains(event.target)) {
         setClickedElement(null)
         setCardClicked('');
-        console.log(clickedElement)
       }
     };
     document.addEventListener('click', handleClickOutside, true)
@@ -139,7 +126,7 @@ const primary = {
   if (projectQuery.isLoading) return 
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2 }}>
     <Box sx={{display: 'flex', flexWrap: 'wrap',  mt:10, ml:10 }}>
-      CARREGANDO...
+      <CircularProgress></CircularProgress>
     </Box>
     </Box>
 
@@ -148,8 +135,7 @@ const primary = {
   <ThemeProvider theme={theme}>
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2 }}>
     <Header title="Projetos"></Header>
-    {  projectQuery.isLoading ? <CircularProgress />
-    :<Box 
+    <Box 
       id="form_wrapper"
       sx={{ 
         overflow:'auto',
@@ -163,13 +149,9 @@ const primary = {
       }}
     >
       {projectQuery.data.map((item, index) => {
-        console.log("itemid: ", item._id)
         return <ProjectCard id={CARD_ID_PREFIX + item._id} key={item._id} projectKey={item._id} project={item} title={item.name.toUpperCase()} description={item.description}></ProjectCard>
       })}
-      {/* <ProjectCard title="DEVTECTIVE" description="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"></ProjectCard>
-      <ProjectCard title="REDIRECT" description={"shablau"}></ProjectCard>
-      <ProjectCard title="BLABLABLA" description={"shablau"}></ProjectCard> */}
-    </Box>}
+    </Box>
     </Box>
     </ThemeProvider>
   );
