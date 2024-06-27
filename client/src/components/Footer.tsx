@@ -25,7 +25,10 @@ const Footer = () => {
 //   const classes = useStyles();
 
   return (
-    <AppBar elevation={0} position="fixed" sx={footer}>
+    <AppBar elevation={0} 
+    
+      // position="fixed" 
+      sx={footer}>
     {/* <Box sx={{
         display:'flex',
         // alignContent:'center',

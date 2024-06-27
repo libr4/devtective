@@ -62,7 +62,8 @@ return (
       }}
       style={{
           transform: (isCardClicked) ? 'scale(1.09)' : undefined,
-          boxShadow: (isCardClicked) ? '2px 8px 16px #00796b':undefined,
+          // boxShadow: (isCardClicked) ? '2px 8px 16px #00796b':undefined,
+          boxShadow: (isCardClicked) ? '0px 0px 1px 3px #00796b':undefined,
           transition: 'transform 0.3s, box-shadow 0.4s',
       }}
 
@@ -70,7 +71,13 @@ return (
         textDecoration:'none',
         // all:'unset',
         maxWidth: 345,
-        marginRight: 2,
+        // marginRight: 2,
+        // mx: 1,
+        mx:{
+          sm:0,
+          md:1,
+          xs:0,
+        },
         my:2,
         borderRadius: 2,
         width:'340px',

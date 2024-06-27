@@ -1,65 +1,58 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
-import FilledInput from '@mui/material/FilledInput';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Typography from '@mui/material/Typography';
-import { FormControlLabel, createTheme } from '@mui/material';
 import Header from '../components/Header';
-import { ThemeProvider } from '@emotion/react';
-import { Copyright } from './Login';
-import Footer from '../components/Footer';
-import axios from 'axios';
-import NewTaskForm from '../components/NewTaskForm';
-import TaskGrid from '../components/TaskGrid';
 import TaskView from '../components/TaskView';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import { useAppContext } from '../context/AppProvider';
+import { useEffect } from 'react';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
-export default function NewTask() {
-  const [showPassword, setShowPassword] = React.useState(false);
+export default function TaskViewPage() {
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
+  const {currentScreen, setCurrentScreen} = useAppContext();
 
   const {state} = useLocation();
-  console.log("state1: ", state);
+  const {taskId} = useParams();
+  let title = state?.title ? `${state?.taskId || taskId || ''} - ${state.title}` : '' ;
 
 
-  const primary = {
-    main: '#9b111e',
-    // light: '#42a5f5',
-    // dark: '#1565c0',
-    // contrastText: '#fff',
-  };
-
-  const theme = createTheme({
-    palette: {
-      primary,
-      // secondary: purple,
-    },
-  });
-
-
-
-  
+  useEffect(() => {
+    if (currentScreen !== 'tasks')
+      setCurrentScreen('tasks')
+  }, [currentScreen])
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2, }}>
-        <Header title="Tarefas"></Header> 
+      <Box
+        sx={{
+          display:'flex',
+          width:'65vw',
+          justifyContent:'space-between',
+
+        }}
+
+      >
+        <Header title={title}></Header> 
+        <Box 
+        >
+          <Box sx={{display:'flex', alignItems:'end', flex:1.0, height:'100%'}}>
+          <Button 
+            size='small'
+            sx={{
+              color:'#00796b',
+              width:'180px',
+              // height:'100px'
+            }}
+            type='submit'
+            variant='text'
+            >
+              Lançar movimentação
+          </Button>
+          </Box>
+        </Box>
+      </Box>
         <TaskView></TaskView>
-        {/* <Copyright></Copyright> */}
-        {/* <Footer></Footer> */}
     </Box>
   );
 }

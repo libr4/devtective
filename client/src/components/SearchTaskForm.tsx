@@ -216,6 +216,7 @@ const handleProjectUpdate = (newProject) => {
         // mt:10, ml:2,
         // mb:0, pb:0,
         width:'100%' ,
+        marginLeft:3,
         // gap:'10px',
         // pl:0
       }}

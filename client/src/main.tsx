@@ -8,7 +8,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import TestPage from './pages/TestPage.js';
 import Login from './pages/Login.js';
 import SearchTaskForm from './components/SearchTaskForm.js';
-import NewTaskPage from './pages/NewTaskPage.js';
+import CreateTaskPage from './pages/CreateTaskPage.js';
 import SearchTaskPage from './pages/SearchTaskPage.js';
 import { loginAction } from './pages/Login.js';
 import ErrorPage from './pages/ErrorPage.js';
@@ -23,6 +23,7 @@ import TaskPage from './pages/TaskPage.js';
 import TaskView from './components/TaskView.js';
 import TaskViewPage from './pages/TaskViewPage.js';
 import NewProjectPage from './pages/NewProjectPage.js';
+import TaskActivityPage from './pages/TaskActivityPage.js';
 
 const root = document.getElementById('root') as HTMLElement;
 
@@ -45,8 +46,8 @@ const router = createBrowserRouter([
         element:<SearchTaskPage />
       },
       {
-        path:'/progresso',
-        element:<CollapsibleTable />
+        path:'/atividades',
+        element:<TaskActivityPage />
       },
   {
     path:'projetos',
@@ -63,7 +64,7 @@ const router = createBrowserRouter([
   },
   {
     path:':projectId/nova_tarefa',
-    element:<NewTaskPage />,
+    element:<CreateTaskPage />,
     // action:action,
   },
   {

@@ -12,8 +12,9 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TablePagination from '@mui/material/TablePagination';
+import { useAppContext } from '../context/AppProvider';
 
 function createData(name, calories, fat, carbs, protein, price) {
   return {
@@ -44,7 +45,10 @@ function Row(props) {
 
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow 
+        sx={{ 
+          '& > *': { borderBottom: 'unset' } 
+        }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -60,7 +64,11 @@ function Row(props) {
         <TableCell align="right">{row.calories}</TableCell>
         <TableCell align="right">{row.fat}</TableCell>
         <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
+        {/* <TableCell align="right">{row.protein}</TableCell> */}
+        <TableCell align="right">
+          <Typography>De: Funcionalidade</Typography>
+          <Typography>Para: Erro</Typography>
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -72,30 +80,6 @@ function Row(props) {
               <Typography gutterBottom component="div">
               "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
               </Typography>
-              {/* <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
-                        {historyRow.date}
-                      </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
-                      <TableCell align="right">{historyRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table> */}
             </Box>
           </Collapse>
         </TableCell>
@@ -110,11 +94,19 @@ const rows = [
   createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
   createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
   createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
+  // createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
+  // createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
 ];
 
 export default function CollapsibleTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const {currentScreen, setCurrentScreen} = useAppContext();
+
+  useEffect(() => {
+    if (currentScreen !== 'tasks')
+      setCurrentScreen('tasks')
+  }, [currentScreen])
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -125,29 +117,12 @@ export default function CollapsibleTable() {
     setPage(0);
   };
   return (
-    <Box sx={{ overflowY: 'auto', mt:10, width:'80vw',
-        // maxHeight: 'calc(100vh - 112px)' }}>
-        maxHeight: '80vh' }}>
-        <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              pl:'1.0rem',
-              pb:'1.5rem',
-              pr:'2rem',
-              // letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Histórico da Tarefa
-        </Typography>
+    <Box sx={{ 
+      width:'80vw', 
+      // maxHeight:'50vh',
+      height:'100vh',
+    }}>
+        
       <TableContainer component={Paper}>
         <Table 
           // sx={{tableLayout:'fixed'}} 
@@ -156,7 +131,7 @@ export default function CollapsibleTable() {
             <TableRow>
               <TableCell />
               {/* <TableCell>39435</TableCell> */}
-              <TableCell   align='left'>Autor</TableCell>
+              <TableCell align='left'>Autor</TableCell>
               <TableCell align='right'>Fase</TableCell>
               <TableCell align="right">Prioridade</TableCell>
               <TableCell align="right">Tipo</TableCell>

@@ -311,7 +311,7 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
 
   return (
     <ThemeProvider theme={theme}>
-    <Box sx={{mt:0, pt:0, width: '100%' }}>
+    <Box sx={{mt:0, pt:0, }}>
      
       <Paper sx={{ 
             // width: '100vw',
@@ -319,7 +319,7 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
         {/* <EnhancedTableToolbar numSelected={selected.length} /> */}
         <TableContainer>
           <Table
-            sx={{ minWidth: 50, tableLayout:'fixed' }}
+            sx={{ tableLayout:'fixed' }}
             aria-labelledby="tableTitle"
             // size={dense ? 'small' : 'medium'}
           >

@@ -83,7 +83,7 @@ export default function CustomDrawer() {
         icon:<GiSettingsKnobs />
       },]
 
-  const drawerWidth = 180;
+  const drawerWidth = 160;
 
   const primary = {
     main: '#00796b',           // Main teal color
@@ -109,19 +109,12 @@ const theme = createTheme({
           // width: drawerWidth,
           // minWidth:'50px',
           width: {
-            sm:'60px',
+            sm:'50px',
             md:drawerWidth,
-            xs:'60px',
+            xs:'50px',
           },
           // flexShrink: 0,
           '& .MuiDrawer-paper': {
-            // width: drawerWidth,
-            // width: {
-            //   sm:'60px',
-            //   md:drawerWidth,
-            //   xs:'60px',
-            // },
-            // boxSizing: 'border-box',
           },
         }}
         variant="permanent"
