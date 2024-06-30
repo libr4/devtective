@@ -50,7 +50,6 @@ const updateTask = async (req:TaskRequest, res:Response) => {
 
         const fromProject = req.project?._id;
         const fromTask = req.task?._id;
-        console.log('task:', task, 'project:', req.project)
 
         let updatedTask = await TaskService.updateTask({fromProject, taskId}, taskChangesArray)
         if (!updatedTask) throw new NotFoundError(['Tarefa não encontrada!']);
