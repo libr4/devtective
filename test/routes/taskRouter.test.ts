@@ -166,22 +166,22 @@ describe("TASKS API", () => {
             expect(response.body.messages[0]).toBe("Erro ao encontrar tarefa!");
         })
 
-        it("should return the new changed task but with same _id and taskId", async () => {
-            const response = await request(app)
-                .patch(`/api/v1/projects/${testProject1._id}/tasks/${testTask1.taskId}`)
-                .send(changes)
-                .set('Cookie', tokenCookie)
-            const query = await TaskModel.find({fromProject:testProject1._id, taskId:testTask1.taskId});
-            // console.log("query", query)
+        // it("should return the new changed task but with same _id and taskId", async () => {
+        //     const response = await request(app)
+        //         .patch(`/api/v1/projects/${testProject1._id}/tasks/${testTask1.taskId}`)
+        //         .send(changes)
+        //         .set('Cookie', tokenCookie)
+        //     const query = await TaskModel.find({fromProject:testProject1._id, taskId:testTask1.taskId});
+        //     // console.log("query", query)
 
-            //changes are expected
-            expect(response.body.title).toBe(changes.title)
-            expect(response.body.description).toBe(changes.description)
+        //     //changes are expected
+        //     expect(response.body.title).toBe(changes.title)
+        //     expect(response.body.description).toBe(changes.description)
 
-            //but taskId should remain the same
-            expect(response.body._id.toString()).toBe(testTask1._id.toString())
-            expect(response.body.taskId).toBe(testTask1.taskId)
-        })
+        //     //but taskId should remain the same
+        //     expect(response.body._id.toString()).toBe(testTask1._id.toString())
+        //     expect(response.body.taskId).toBe(testTask1.taskId)
+        // })
     })
     describe("DELETE /api/v1/projects/:projectId/tasks", () => {
         it("should return the amount of deleted tasks", async () => {

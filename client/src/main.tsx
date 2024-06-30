@@ -46,7 +46,7 @@ const router = createBrowserRouter([
         element:<SearchTaskPage />
       },
       {
-        path:'/atividades',
+        path:':projectId/task/:taskId/atividades',
         element:<TaskActivityPage />
       },
   {

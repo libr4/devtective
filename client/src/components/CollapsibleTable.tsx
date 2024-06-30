@@ -15,14 +15,18 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useEffect, useState } from 'react';
 import TablePagination from '@mui/material/TablePagination';
 import { useAppContext } from '../context/AppProvider';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { CircularProgress } from '@mui/material';
 
-function createData(name, calories, fat, carbs, protein, price) {
+function createData(name, status, type, priority, date, price) {
   return {
     name,
-    calories,
-    fat,
-    carbs,
-    protein,
+    status,
+    type,
+    priority,
+    date,
     price,
     history: [
       {
@@ -39,9 +43,23 @@ function createData(name, calories, fat, carbs, protein, price) {
   };
 }
 
+// function prepareTaskActivities(arr) {
+//   const changesInTask: Partial<ITask> = changesArray.reduce((acc, change) => {
+//     acc[change.field] = change.newValue;
+//     return acc;
+// }, {} as Partial<ITask>);
+// }
+
 function Row(props) {
-  const { row } = props;
+  const { row, author, changes, currentTask } = props;
   const [open, setOpen] = React.useState(false);
+  console.log(row.changes.filter((e) => {return e.field === 'priority'})[0].newValue)
+  const cellContent = {
+    status:row.changes.filter((e) => {return e.field === 'status'})[0],
+    type:row.changes.filter((e) => {return e.field === 'type'})[0],
+    priority:row.changes.filter((e) => {return e.field === 'priority'})[0],
+    assignedTo:row.changes.filter((e) => {return e.field === 'assignedTo'})[0],
+  }
 
   return (
     <React.Fragment>
@@ -59,26 +77,23 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.name}
+          {row.author}
         </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        {/* <TableCell align="right">{row.protein}</TableCell> */}
-        <TableCell align="right">
-          <Typography>De: Funcionalidade</Typography>
-          <Typography>Para: Erro</Typography>
-        </TableCell>
+        <TableCell align="right">{cellContent?.status?.newValue || currentTask.status}</TableCell>
+        <TableCell align="right">{cellContent?.priority?.newValue || currentTask.priority}</TableCell>
+        <TableCell align="right">{cellContent?.type?.newValue || currentTask.type}</TableCell>
+        <TableCell align="right">{cellContent?.assignedTo?.newValue || currentTask.assignedTo}</TableCell>
+        <TableCell align="right">{new Date(row.createdAt).toLocaleDateString('pt-br') || new Date(currentTask.createdAt).toLocaleDateString('pt-br')}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
-                History
+                Nota
               </Typography>
               <Typography gutterBottom component="div">
-              "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+                {row.note}
               </Typography>
             </Box>
           </Collapse>
@@ -88,20 +103,33 @@ function Row(props) {
   );
 }
 
-const rows = [
-  createData('Jonas Pereira', 159, 6.0, 24, 4.0, 3.99),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-  createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-  createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-  createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
+// const rows = [
+//   createData('Jonas Pereira', 159, 6.0, 24, 4.0, 3.99),
+//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
+//   createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
+//   createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
+//   createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
   // createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
   // createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-];
+// ];
 
 export default function CollapsibleTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const {currentScreen, setCurrentScreen} = useAppContext();
+  const {currentScreen, setCurrentScreen, currentTask} = useAppContext();
+
+  const {projectId, taskId} = useParams();
+  const allActivitiesQuery = useQuery({
+    queryKey:[`get_all_activities_${projectId}_${taskId}`] ,
+    queryFn: async () => {
+      const response = await axios.get(`/api/v1/projects/${projectId}/tasks/${currentTask._id}/updates`)
+      return response.data;
+    }
+  })
+
+  const rows = allActivitiesQuery.data || [];
+  rows.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  console.log(rows)
 
   useEffect(() => {
     if (currentScreen !== 'tasks')
@@ -116,6 +144,10 @@ export default function CollapsibleTable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  if (allActivitiesQuery.isLoading) {
+    return <CircularProgress></CircularProgress>
+  }
+  console.log("allActivitiesQuery", allActivitiesQuery.data)
   return (
     <Box sx={{ 
       width:'80vw', 
@@ -135,13 +167,15 @@ export default function CollapsibleTable() {
               <TableCell align='right'>Fase</TableCell>
               <TableCell align="right">Prioridade</TableCell>
               <TableCell align="right">Tipo</TableCell>
-              <TableCell align="right">Tecnologia</TableCell>
+              <TableCell align="right">Atribuído para</TableCell>
+              <TableCell align="right">Data de Modificação</TableCell>
             </TableRow>
           </TableHead>
           <TableBody sx={{height:'50px'}}>
-            {rows.map((row) => (
-              <Row key={row.name} row={row} />
-            ))}
+            {rows.map((row) => {
+              console.log(row.note)
+              return <Row key={row.name} author={row.author} createdAt={row.createdAt} currentTask={currentTask} changes={row.changes} row={row} />
+            })}
           </TableBody>
         </Table>
       </TableContainer>

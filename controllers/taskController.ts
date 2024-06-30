@@ -6,6 +6,7 @@ import { TaskRequest } from '../middleware/taskValidation.js';
 import { handleError } from '../middleware/errorHandlerMiddleware.js';
 import { UserRequest } from '../types/user.js';
 import { ProjectRequest } from '../types/project.js';
+import TaskService from '../service/TaskService.js';
 
 /**Retorna todas as tarefas referentes a um projeto, desde que o usuário esteja logado */
 const getAllTasks = async (req:ProjectRequest, res:Response) => {
@@ -42,13 +43,21 @@ const getTask = async (req:TaskRequest, res:Response) => {
 
 
 const updateTask = async (req:TaskRequest, res:Response) => {
-    const taskChanges = req.body;
+    const taskChangesArray = req.body.changes;
     try {
         const task = req.task as ITask;
         const taskId = task.taskId;
+
         const fromProject = req.project?._id;
-        let updatedTask:ITask = await Task.findOneAndUpdate({fromProject, taskId}, taskChanges, {new:true}) as ITask;
+        const fromTask = req.task?._id;
+        console.log('task:', task, 'project:', req.project)
+
+        let updatedTask = await TaskService.updateTask({fromProject, taskId}, taskChangesArray)
         if (!updatedTask) throw new NotFoundError(['Tarefa não encontrada!']);
+
+        let createdTaskActivity = await TaskService.createTaskActivity({...req.body, fromProject, fromTask})
+        if (!createdTaskActivity) throw new NotFoundError(['Erro ao criar movimentação!']);
+
         return res.status(StatusCodes.OK).json(updatedTask);
     } catch (error:any) {
         return handleError(res, error);

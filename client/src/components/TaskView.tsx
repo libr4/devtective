@@ -99,7 +99,11 @@ export default function TaskView() {
 
   const [edit, setEdit] = useState<editState>(initialState);
 
-  const {currentUser} = useAppContext();
+  const {currentUser, setCurrentTask} = useAppContext();
+
+  React.useEffect(() => {
+    setCurrentTask(state)
+  }, [])
 
   const prioridades = ["Muito Baixa", "Baixa", "Média", "Alta", "Muito Alta"];
   const status = ["Aberta", "Desenvolvimento", "Teste", "Adiada", "Concluída", "Personalizada" ];
@@ -107,27 +111,32 @@ export default function TaskView() {
 
   const taskActivityPost = useMutation({
     mutationFn: async(data:ITaskUpdate) => {
-      const response = await axios.post(`/api/v1/projects/${projectId}/tasks/${state._id}/updates`, data);
+      const response = await axios.patch(`/api/v1/projects/${projectId}/tasks/${state.taskId}`, data);
       return response;
     }
   })
+
+  const prepareChanges = (data:{[k: string]: FormDataEntryValue}) => {
+    let changes:ITaskUpdate["changes"] = [];
+    for (let d in (data as any)) {
+      if (d !== '_id' && d !== 'note' && state[d] !== data[d]) {
+        changes.push({
+          field:d,
+          oldValue:state[d],
+          newValue:data[d],
+        })
+      } 
+    }
+    return changes;
+  }
+
 
   const handleSubmitActivity = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData);
 
-    let changes:ITaskUpdate["changes"] = [];
-
-    for (let d in data) {
-      if (d !== '_id' && d !== 'note' && state[d] !== data[d]) {
-        changes.push({
-          field:d,
-          oldValue:state[d],
-          newValue:data[d]
-        })
-      } 
-    }
+    let changes:ITaskUpdate["changes"] = prepareChanges(data);
 
     if (changes.length === 0 && data.note == '') {
       console.log('empty')

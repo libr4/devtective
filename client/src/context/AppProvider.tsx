@@ -10,6 +10,7 @@ export default function AppProvider({children}) {
   const sayHello = () => console.log("Hello context");
   const [projects, setProjects] = useState([]);
   const [currentProject, setCurrentProject] = useState({});
+  const [currentTask, setCurrentTask] = useState({});
   const [currentScreen, setCurrentScreen] = useState('projects');
   const [currentUser, setCurrentUser] = useState('projects');
   const [cardClicked, setCardClicked] = useState('');
@@ -19,9 +20,12 @@ export default function AppProvider({children}) {
       currentProject, setCurrentProject, 
       currentScreen, setCurrentScreen,
       currentUser, setCurrentUser,
+      currentTask, setCurrentTask,
       cardClicked, setCardClicked,
       clickedElement, setClickedElement,
-    }}>{children}</AppContext.Provider>
+    }}>
+      {children}
+    </AppContext.Provider>
   )
 }
 
