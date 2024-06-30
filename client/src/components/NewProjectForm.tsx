@@ -122,7 +122,8 @@ const primary = {
   const currentUserQuery = useQuery({
     queryKey:['current-user'],
     queryFn: async () => {
-      const response = await axios.get('/api/v1/users/current-user')
+      const response = await axios.get('/api/v1/users/current-user');
+      
       return response.data;
     }
   })

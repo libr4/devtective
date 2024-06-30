@@ -132,7 +132,7 @@ export interface TaskRequest extends Request {
 /** verifica se o id da tarefa está presente e se é um id de tarefa existente.
 Por fim, inclui a task na request para possível manipulação nos próximos middleware
 ou controladores */
-export const validateIdParam = async (req:TaskRequest, res:Response, next:NextFunction) => {
+export const validateTaskIdParam = async (req:TaskRequest, res:Response, next:NextFunction) => {
     const {taskId} = req.params;
     try {
         const projectId = req.project?._id;
@@ -141,6 +141,29 @@ export const validateIdParam = async (req:TaskRequest, res:Response, next:NextFu
         }
         if (!taskId) throw new ValidationError(['O id da tarefa é obrigatório!']);
         let task =  await Task.findOne({taskId, fromProject:projectId});
+        if(!task) {
+            throw new ValidationError(["Erro ao encontrar tarefa!"])
+        }
+        req.task = task
+    } catch (error:any) {
+        return handleError(res, error);
+    }
+    return next();
+}
+
+/**For the task activity api, it is used the mongoose object id (the _id property) for task identification.
+ * 
+ */
+export const validateTaskIdParamForTaskActivity = async (req:TaskRequest, res:Response, next:NextFunction) => {
+
+    const {task_id} = req.params;
+    try {
+        const projectId = req.project?._id;
+        if(!projectId) {
+            throw new ValidationError(["Erro ao encontrar projeto!"])
+        }
+        if (!task_id) throw new ValidationError(['O id da tarefa é obrigatório!']);
+        let task =  await Task.findOne({_id:task_id, fromProject:projectId});
         if(!task) {
             throw new ValidationError(["Erro ao encontrar tarefa!"])
         }

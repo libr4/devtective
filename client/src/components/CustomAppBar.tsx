@@ -16,14 +16,16 @@ import { PiDetectiveFill } from "react-icons/pi";
 import { GiSmokingPipe } from "react-icons/gi";
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 // import '../App.css'
 
 export default function CustomAppBar() {
   const drawerWidth = 240;
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const pages = [{label:'Tarefa', link:'/tarefa'}, {label:'Histórico', link:'/progresso'}, {label:'Chat', link:'#'}, {label:'Projetos', link:'/projetos'}];
+
+  const {projectId, taskId} = useParams();
+  const pages = [{label:'Tarefa', link:'/tarefa'}, {label:'Atividades', link:`/${projectId}/task/${taskId}/atividades`}, {label:'Chat', link:'#'}, {label:'Projetos', link:'/projetos'}];
   const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -118,7 +120,7 @@ const primary = {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                <MenuItem  disabled key={page.label} onClick={handleCloseNavMenu}>
                   {/* <Typography textAlign="center">{page.label}</Typography> */}
                 <Typography sx={{all:'unset'}} component={Link} to={page.link}>
                   {page.label}

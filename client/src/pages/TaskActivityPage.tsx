@@ -21,6 +21,7 @@ import axios from 'axios';
 import NewTaskForm from '../components/NewTaskForm';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import CollapsibleTable from '../components/CollapsibleTable';
 
 export default function NewTask() {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -54,7 +55,7 @@ export default function NewTask() {
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2, }}>
         <Header validation={validation} title="Nova Tarefa"></Header> 
-        <NewTaskForm setValidation={setValidation}></NewTaskForm>
+        <CollapsibleTable></CollapsibleTable>
         {/* <Copyright></Copyright> */}
         <Footer></Footer>
     </Box>

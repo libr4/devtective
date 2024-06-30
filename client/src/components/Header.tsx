@@ -1,16 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
-import FilledInput from '@mui/material/FilledInput';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
 import { Alert, FormControlLabel } from '@mui/material';
 import { useLocaleText } from '@mui/x-date-pickers/internals';
@@ -20,12 +9,7 @@ export default function Header(props:any) {
 
   let {title} = props;
   const {validation} = props;
-  console.log(title)
-  const {state} = useLocation()
-
-  if(state?.title) title = state.title;
-  const taskId = state?.taskId || '';
-
+  
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -35,16 +19,18 @@ export default function Header(props:any) {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', width:'45vw' }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', maxWidth:'75%', marginLeft:3 }}>
         <Box 
           sx={{
             width:'100%',
+            
             display:'flex',
-            justifyContent:'space-between'
+            justifyContent:'space-between',
+            flex:1,
           }}>
           <Typography
             variant="h6"
-            noWrap
+            // noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
             sx={{
@@ -60,7 +46,7 @@ export default function Header(props:any) {
               textDecoration: 'none',
             }}
           >
-            {taskId ? (taskId + " - ") : ''}{title}
+            {title}
           </Typography>
           {validation && <Alert severity='error'>{validation}</Alert>}
         </Box> 

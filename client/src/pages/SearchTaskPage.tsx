@@ -48,7 +48,7 @@ export default function SearchTaskPage() {
   // const []
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', mt:9.5, ml:2, }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', mt:9.5, ml:2, width:'65vw'}}>
         <Header title="Encontrar tarefas"></Header> 
         <SearchTaskForm></SearchTaskForm>
         <Footer></Footer>

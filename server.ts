@@ -14,6 +14,8 @@ import cookieParser from 'cookie-parser';
 import { authenticateUser, validateJWT } from './middleware/authMiddleware.js';
 import { validateProjectIdParam } from './middleware/projectValidation.js';
 import testRouter from './routes/testRouter.js';
+import taskUpdateRouter from './routes/taskUpdateRouter.js';
+import { validateTaskIdParam, validateTaskIdParamForTaskActivity } from './middleware/taskValidation.js';
 const app = express();
 
 // app.use(express.urlencoded({ extended: true }));
@@ -28,6 +30,10 @@ app.get('/api/hello', (req:Request, res:Response) => {
 })
 app.use('/api/v1/projects', validateJWT, authenticateUser, projectRouter)
 app.use('/api/v1/projects/:projectId/tasks', validateProjectIdParam, validateJWT, authenticateUser, taskRouter)
+app.use('/api/v1/projects/:projectId/tasks/:task_id/updates', 
+    validateProjectIdParam, validateTaskIdParamForTaskActivity, 
+    validateJWT, authenticateUser,  
+    taskUpdateRouter);
 app.use('/api/v1/users',  userRouter)
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/test', testRouter)

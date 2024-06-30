@@ -12,21 +12,21 @@ import {
     deleteManyTasks
 } from '../controllers/taskController.js'
 import { validateTaskIdParam, validateTaskData } from '../middleware/taskValidation.js';
+import { createTaskActivity, getAllTaskUpdates } from '../controllers/taskUpdateController.js';
 
 // router.use('/projects/:projectId/tasks')
 
 router.route('/')
-    .get(getAllTasks)
-    .post(validateTaskData,
-        createTask)
+    .get(getAllTaskUpdates)
+    .post(createTaskActivity)
     .delete(deleteManyTasks);
 
-router.route('/:taskId')
-    .get(validateTaskIdParam, 
-        getTask)
-    .patch(validateTaskIdParam, 
-        updateTask)
-    .delete(validateTaskIdParam, 
-        deleteTask);
+// router.route('/:taskId')
+//     .get(validateIdParam, 
+//         getTask)
+//     .patch(validateIdParam, 
+//         updateTask)
+//     .delete(validateIdParam, 
+//         deleteTask);
 
 export default router
