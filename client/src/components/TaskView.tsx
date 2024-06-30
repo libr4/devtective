@@ -80,6 +80,7 @@ export default function TaskView() {
 
   const {projectId} = useParams();
 
+
   const theme = createTheme({
     palette: {
       primary,
