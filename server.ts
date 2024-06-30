@@ -16,9 +16,16 @@ import { validateProjectIdParam } from './middleware/projectValidation.js';
 import testRouter from './routes/testRouter.js';
 import taskUpdateRouter from './routes/taskUpdateRouter.js';
 import { validateTaskIdParam, validateTaskIdParamForTaskActivity } from './middleware/taskValidation.js';
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import path from 'path';
 const app = express();
 
 // app.use(express.urlencoded({ extended: true }));
+// const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+console.log(__dirname)
+app.use(express.static(path.resolve(__dirname, '../client/dist')));
 app.use(cookieParser());
 app.use(express.json());
 
@@ -37,6 +44,10 @@ app.use('/api/v1/projects/:projectId/tasks/:task_id/updates',
 app.use('/api/v1/users',  userRouter)
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/test', testRouter)
+
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
+});
 
 app.use('*', (req, res) => {
     return res.status(404).json({msg:"Not found!"})

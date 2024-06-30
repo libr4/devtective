@@ -27,15 +27,44 @@ import Header from './components/Header';
 import NewTaskPage from './pages/CreateTaskPage';
 import SearchTaskForm from './components/SearchTaskForm';
 import SearchTaskPage from './pages/SearchTaskPage';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Footer from './components/Footer';
 import AppProvider from './context/AppProvider';
+import { useQuery } from '@tanstack/react-query';
+import { CircularProgress } from '@mui/material';
 
 
 function App() {
+  const getCurrentUserQuery = useQuery({
+    queryKey:['current-user'],
+    queryFn:async () => {
+        const response = await axios.get('/api/v1/users/current-user');
+        console.log(JSON.parse(response.data))
+        return response.data
+
+    },
+    // onError:(error) => {
+    //   console.log(error)
+    // }
+
+  })
+  const navigate = useNavigate();
+  if (getCurrentUserQuery.isError) {
+    navigate('/login')
+  }
 
   const drawerWidth = 240;
 
+  if (getCurrentUserQuery.isLoading)
+    return <Box
+  sx={{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh', // Ensures it covers the full viewport height
+  }}>
+  <CircularProgress />
+</Box>
   return (
     <>
     <AppProvider>

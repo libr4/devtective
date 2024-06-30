@@ -281,10 +281,6 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
       ),
     [order, orderBy, page, rowsPerPage, rows],
   );
-    if(allTasksQuery.isLoading) 
-    return <Container sx={{height:'100%', marginLeft:'auto', marginTop:'auto', marginRight:'auto'}}>
-                <CircularProgress></CircularProgress>
-            </Container>
 //   rows = allTasksQuery?.data;
 
 
@@ -308,7 +304,12 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
         taskIds:number[]
     }
     
+    return <div>Hello there</div>
 
+  if(allTasksQuery.isLoading) 
+    return (<Container sx={{height:'100%', marginLeft:'auto', marginTop:'auto', marginRight:'auto'}}>
+              <CircularProgress></CircularProgress>
+          </Container>)
   return (
     <ThemeProvider theme={theme}>
     <Box sx={{mt:0, pt:0, }}>

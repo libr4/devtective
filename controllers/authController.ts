@@ -43,6 +43,7 @@ export const logout = (req:Request, res:Response, next:NextFunction) => {
     res.status(StatusCodes.OK).json({message:'Usuário deslogado'})
 
 }
+
 // const getTask = async (req:TaskRequest, res:Response) => {
 //     const task = req.task;
 //     return res.status(StatusCodes.OK).json(task);

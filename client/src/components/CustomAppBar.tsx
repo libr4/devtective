@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Container from '@mui/material/Container';
 import AdbIcon from '@mui/icons-material/Adb';
 import IconButton from '@mui/material/IconButton';
@@ -17,12 +17,15 @@ import { GiSmokingPipe } from "react-icons/gi";
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
 import { Link, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 // import '../App.css'
 
 export default function CustomAppBar() {
   const drawerWidth = 240;
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const [enableLogout, setEnableLogout] = useState(false);
 
   const {projectId, taskId} = useParams();
   const pages = [{label:'Tarefa', link:'/tarefa'}, {label:'Atividades', link:`/${projectId}/task/${taskId}/atividades`}, {label:'Chat', link:'#'}, {label:'Projetos', link:'/projetos'}];
@@ -40,6 +43,7 @@ export default function CustomAppBar() {
   };
 
   const handleCloseUserMenu = () => {
+    setEnableLogout(true)
     setAnchorElUser(null);
   };
 
@@ -56,6 +60,14 @@ const primary = {
       // secondary: purple,
     },
   });
+
+  const logoutQuery = useQuery({
+    queryKey:['logout'],
+    queryFn:async ()=> {
+      const response = await axios.get('/api/v1/auth/logout')
+    },
+    enabled:enableLogout
+  })
 
   return (
     <div>
