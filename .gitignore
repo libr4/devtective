@@ -1,5 +1,5 @@
 .env
 node_modules
 erros.txt
-dist/
+/dist
 testingDB.ts
