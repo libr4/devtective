@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "setup-project": "npm i && cd client && npm i",
-    "client":"cd client && npm run dev",
+    "client": "cd client && npm run dev",
     "test": "jest",
     "dev": "concurrently --kill-others-on-fail \"nodemon\" \"npm run client\""
   },
@@ -41,6 +41,6 @@
     "mongoose": "^8.4.0",
     "morgan": "^1.10.0",
     "nanoid": "^5.0.7",
-    "react-router-dom": "^6.23.1"
+    "react-router-dom": "^6.24.0"
   }
 }
