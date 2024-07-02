@@ -23,9 +23,13 @@ const app = express();
 
 // app.use(express.urlencoded({ extended: true }));
 // const __dirname = dirname(fileURLToPath(import.meta.url));
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-console.log(__dirname)
-app.use(express.static(path.resolve(__dirname, '../client/dist')));
+let dir = ''
+if (process.env.NODE_ENV !== 'test') 
+    //@ts-ignore
+    dir = path.dirname(fileURLToPath(import.meta.url));
+
+console.log(dir)
+app.use(express.static(path.resolve(dir, '../client/dist')));
 app.use(cookieParser());
 app.use(express.json());
 
@@ -45,9 +49,11 @@ app.use('/api/v1/users',  userRouter)
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/test', testRouter)
 
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
-});
+if (process.env.NODE_ENV !== 'test') {
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(dir, '../client/dist', 'index.html'));
+    });
+}
 
 app.use('*', (req, res) => {
     return res.status(404).json({msg:"Not found!"})
