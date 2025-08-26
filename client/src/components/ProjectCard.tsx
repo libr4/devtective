@@ -7,7 +7,6 @@ import { useRef } from 'react';
 import styles from './styles/ProjectCard.module.css';
 // import cover from '../assets/detective.jpg'
 
-// (keep this ThemeProvider here only if you really need it local)
 const theme = createTheme({
   palette: {
     primary: { main: '#00796b', light: '#48a999', dark: '#004c40', contrastText: '#ffffff' },
@@ -34,19 +33,16 @@ function StyledCard({ id, title, description, project, projectKey }: StyledCardP
   const isCardClicked = cardClicked === projectKey;
   const navigate = useNavigate();
 
-  // Two-click flow: first click selects, second click navigates
   const handleCardClick = (e: React.MouseEvent) => {
     if (!isCardClicked) {
-      e.preventDefault();            // block navigation on first click
+      e.preventDefault();            
       setCardClicked(projectKey);
       setClickedElement(cardRef);
     }
-    // when already selected, Link will navigate
   };
 
-  // Hover styles should NOT shrink/override the selected transform
   const hoverSx = isCardClicked
-    ? {} // keep the selected transform while hovering
+    ? {} 
     : {
         '&:hover': {
           transform: 'scale(1.03)',
@@ -63,7 +59,6 @@ function StyledCard({ id, title, description, project, projectKey }: StyledCardP
         to={isCardClicked ? `/${project._id}/tasks` : '#'}
         onClick={handleCardClick}
         role="button"
-        // visual tweaks: subtle default shadow, clear selected ring, smooth transform
         sx={{
           textDecoration: 'none',
           outline: 'none',
@@ -89,9 +84,8 @@ function StyledCard({ id, title, description, project, projectKey }: StyledCardP
           '&:focus, &:focus-visible': { outline: 'none' },
         }}
       >
-        {/* Removed the CardMedia strip to get rid of the “blue space” */}
+      
         <CardContent sx={{ p: 0 }}>
-          {/* Header bar (same placement) */}
           <Box
             sx={{
               width: '100%',

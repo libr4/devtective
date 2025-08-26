@@ -409,7 +409,9 @@ export default function EnhancedTable({selected, setSelected, refetchTasks, trig
                     <TableCell align="right">{row.priority}</TableCell>
                     <TableCell align="right">{row.type}</TableCell>
                     <TableCell align="right">{row.status}</TableCell>
-                    <TableCell align="right">{(memberDetails?.filter(el => el._id === row.assignedTo))[0]?.name || "Ninguém"}</TableCell>
+                    <TableCell align="right">
+                      {memberDetails?.find(m => m._id === row.assignedTo)?.name ?? "Ninguém"}
+                    </TableCell>
                   </TableRow>
                 );
               })}
