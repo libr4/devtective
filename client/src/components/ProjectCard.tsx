@@ -7,148 +7,133 @@ import { useRef } from 'react';
 import styles from './styles/ProjectCard.module.css';
 // import cover from '../assets/detective.jpg'
 
+// (keep this ThemeProvider here only if you really need it local)
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#00796b',
-      light: '#48a999',
-      dark: '#004c40',
-      contrastText: '#ffffff',
-    },
-    text: {
-      primary: '#000000',
-      secondary: '#555555',
-    },
+    primary: { main: '#00796b', light: '#48a999', dark: '#004c40', contrastText: '#ffffff' },
+    text: { primary: '#000000', secondary: '#555555' },
   },
-  typography: {
-    h5: {
-      fontWeight: 'bold',
-    },
-  },
+  typography: { h5: { fontWeight: 'bold' } },
 });
 
-function getMemberNames(project) {
-  const memberDetails = project.memberDetails;
-  const memberNames = memberDetails.map(item => item.name)
-  return memberNames;
+function getMemberNames(project: { memberDetails?: { name: string }[] }) {
+  return (project.memberDetails ?? []).map(m => m.name);
 }
 
+type StyledCardProps = {
+  id: string;
+  title: string;
+  description: string;
+  project: { _id: string; memberDetails?: { name: string }[] };
+  projectKey: string;
+};
 
-// const {setTest} = useAppContext();
-
-function StyledCard({ id, title , description, project, projectKey, }) {
-  const cardRef = useRef(null);
-
-  console.log(styles['clickEffect'])
-
-  const {cardClicked, setCardClicked, setClickedElement} = useAppContext();
-  const isCardClicked = (cardClicked === projectKey);
-
+function StyledCard({ id, title, description, project, projectKey }: StyledCardProps) {
+  const cardRef = React.useRef<HTMLDivElement | null>(null);
+  const { cardClicked, setCardClicked, setClickedElement } = useAppContext();
+  const isCardClicked = cardClicked === projectKey;
   const navigate = useNavigate();
-return (
-  <ThemeProvider theme={theme}>
-    <Card
-      id={id}
-      ref={cardRef}
-      elevation={5}
-      component={Link} 
-      to={ isCardClicked ? `/${project._id}/tasks` : '#'}
-      // to={false}
-      // state={project}
-      onClick={() => {
-        setCardClicked(projectKey)
-        console.log("eq: ", (cardClicked == projectKey))
-        setClickedElement(cardRef)
-      }}
-      style={{
+
+  // Two-click flow: first click selects, second click navigates
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (!isCardClicked) {
+      e.preventDefault();            // block navigation on first click
+      setCardClicked(projectKey);
+      setClickedElement(cardRef);
+    }
+    // when already selected, Link will navigate
+  };
+
+  // Hover styles should NOT shrink/override the selected transform
+  const hoverSx = isCardClicked
+    ? {} // keep the selected transform while hovering
+    : {
+        '&:hover': {
+          transform: 'scale(1.03)',
+          boxShadow: '0 8px 20px rgba(0,0,0,0.18)',
+        },
+      };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Card
+        id={id}
+        ref={cardRef}
+        component={Link}
+        to={isCardClicked ? `/${project._id}/tasks` : '#'}
+        onClick={handleCardClick}
+        role="button"
+        // visual tweaks: subtle default shadow, clear selected ring, smooth transform
+        sx={{
+          textDecoration: 'none',
+          outline: 'none',
+          maxWidth: 'none',
+          mx: { xs: 0, sm: 0, md: 1 },
+          my: 2,
+          borderRadius: 2,
+          width: '100px',
+          minWidth: 0,
           transform: (isCardClicked) ? 'scale(1.09)' : undefined,
           // boxShadow: (isCardClicked) ? '2px 8px 16px #00796b':undefined,
           boxShadow: (isCardClicked) ? '0px 0px 1px 3px #00796b':undefined,
           transition: 'transform 0.3s, box-shadow 0.4s',
-      }}
-
-      sx={{
-        textDecoration:'none',
-        // all:'unset',
-        maxWidth: 345,
-        // marginRight: 2,
-        // mx: 1,
-        mx:{
-          sm:0,
-          md:1,
-          xs:0,
-        },
-        my:2,
-        borderRadius: 2,
-        width:'340px',
-        height:'250px',
-          // transform: 'scale(1.05)',
-        '&:hover': {
-          transition: 'transform 0.3s, box-shadow 0.3s',
-          transform: 'scale(1.03)',
-          boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
-        },
-      }}
-      // className={(isCardClicked) ? styles['clickEffect'] : ''}
-    >
-      {/* <CardActionArea 
-        sx={{
-          heigh:'100%',
-          width:'100%',
-        }}> */}
-        <CardMedia
-        component={'div'}
-          sx={{ height: 0, backgroundColor: '#f0f0f0' }}
-          // image={cover}
-          title="green iguana"
-        />
-        <CardContent sx={{ padding: 0 }}>
+          height: '250px',
+          // transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+          willChange: 'transform',
+          // transform: isCardClicked ? 'scale(1.09)' : 'none',
+          // boxShadow: isCardClicked ? '0 0 0 3px #00796b' : '0 2px 8px rgba(0,0,0,0.08)',
+          border: '1px solid rgba(0,0,0,0.06)',
+          background: '#fff',
+          ...hoverSx,
+          // avoid default blue focus outline artifacts on links
+          '&:focus, &:focus-visible': { outline: 'none' },
+        }}
+      >
+        {/* Removed the CardMedia strip to get rid of the “blue space” */}
+        <CardContent sx={{ p: 0 }}>
+          {/* Header bar (same placement) */}
           <Box
             sx={{
-              heigh:'100%',
-              width:'100%',
-              background: 'linear-gradient(to bottom, #ffd600 0%, #ffbf00 80%, #ffecb3 100%)',
-              padding: '16px',
-              borderTopLeftRadius: '4px',
-              borderTopRightRadius: '4px',
-              display:'flex',
-              alignItems:'center',
-              alignContent:'center',
-              justifyContent:'space-between'
+              width: '100%',
+              background: '#004c40',
+              p: 2,
+              borderTopLeftRadius: 1,
+              borderTopRightRadius: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
           >
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="div"
-              style={{ color: 'white' }}
-            >
+            <Typography gutterBottom variant="h5" component="div" sx={{ color: 'white' }}>
               {title}
             </Typography>
-            {/* <CardActions> */}
-              <IconButton
-                // component={Link}
-                // to={`/${project._id}/alterar`}
-                onClick={() => {
-                  navigate(`/${project._id}/alterar`)
-                }}
-              >
-                <EditIcon 
-                
-                  sx={{color:'white'}}></EditIcon>
-              </IconButton>
-            {/* </CardActions> */}
+
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation(); // don’t trigger card click
+                navigate(`/${project._id}/alterar`);
+              }}
+              size="small"
+              sx={{ color: 'white', '&:hover': { opacity: 0.9 } }}
+              aria-label="Editar projeto"
+            >
+              <EditIcon />
+            </IconButton>
           </Box>
-          <Box sx={{ padding: '16px' }}>
-            <Typography color="textSecondary" sx={{width:'100%'}}>
+
+          {/* Body (same placement) */}
+          <Box sx={{ p: 2 }}>
+            <Typography color="text.secondary" sx={{ width: '100%', mb: 0.5 }}>
               {getMemberNames(project).join(', ')}
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ wordWrap: 'break-word' }}>{description}</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ wordWrap: 'break-word' }}>
+              {description}
+            </Typography>
           </Box>
         </CardContent>
-      {/* </CardActionArea> */}
-    </Card>
-  </ThemeProvider>
-)};
+      </Card>
+    </ThemeProvider>
+  );
+}
 
 export default StyledCard;

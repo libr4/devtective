@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 // import { createBrowserRouter } from 'react-router-dom';
 // import TaskExample, { action, getHello } from './components/NewTaskForm.js';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import TestPage from './pages/TestPage.js';
 import Login from './pages/Login.js';
 import SearchTaskForm from './components/SearchTaskForm.js';
@@ -30,7 +30,7 @@ const root = document.getElementById('root') as HTMLElement;
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 30,
+      staleTime: 0,
     },
   },
 });
@@ -38,73 +38,25 @@ const queryClient = new QueryClient({
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App></App>,
-    errorElement:<ErrorPage></ErrorPage>,
-    children:[
-      {
-        path:':projectId/tasks',
-        element:<SearchTaskPage />
-      },
-      {
-        path:':projectId/task/:taskId/atividades',
-        element:<TaskActivityPage />
-      },
-  {
-    path:'projetos',
-    element:<ProjectPage />,
-    children:[
-
-    ]
-    // action:registerAction,
+    element: <App />,
+    errorElement: <ErrorPage />,
+    children: [
+      { index: true, element: <Navigate to="projetos" replace /> },
+      { path: ":projectId/tasks", element: <SearchTaskPage /> },
+      { path: ":projectId/task/:taskId/atividades", element: <TaskActivityPage /> },
+      { path: "projetos", element: <ProjectPage /> },
+      { path: "novo-projeto", element: <NewProjectPage /> },
+      { path: ":projectId/nova_tarefa", element: <CreateTaskPage /> },
+      { path: ":projectId/task/:taskId", element: <TaskViewPage /> },
+      { path: "task-grid", element: <TaskPage /> },
+    ],
   },
-  {
-    path:'novo-projeto',
-    element:<NewProjectPage />,
-    // action:action,
-  },
-  {
-    path:':projectId/nova_tarefa',
-    element:<CreateTaskPage />,
-    // action:action,
-  },
-  {
-    path:':projectId/task/:taskId',
-    element:<TaskViewPage />,
-    // action:action,
-  },
-  {
-    path:'/task-grid',
-    element:<TaskPage />,
-    // action:registerAction,
-  },
-      // {
-      //   path:'new_task',
-      //   element:<TaskExample />
-      // },
-    ]
-  },
-      {
-        path:'login',
-        element:<Login />,
-        index:true
-        // action:loginAction,
-      },
-  {
-    path:'/register',
-    element:<Register />,
-    action:registerAction,
-  },
+  { path: "login", element: <Login /> },
+  { path: "register", element: <Register />, action: registerAction },
 ]);
-// const response = await axios.get('/api/hello') 
-// console.log(response.data);
 
 ReactDOM.createRoot(root).render(
-  <React.StrictMode>
-    {/* <CssBaseline /> */}
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router}></RouterProvider>
-    </QueryClientProvider>
-    {/* <SignIn></SignIn> */}
-    {/* <App /> */}
-  </React.StrictMode>,
-)
+  <QueryClientProvider client={queryClient}>
+    <RouterProvider router={router} />
+  </QueryClientProvider>
+);

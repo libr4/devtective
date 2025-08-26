@@ -35,7 +35,7 @@ const CARD_ID_PREFIX = 'card_'
 
 export default function ProjectPage() {
   
-  const [showPassword, setShowPassword] = React.useState(false);
+  // const [showPassword, setShowPassword] = React.useState(false);
 
 
   const {sayHello, setProjects, setCurrentScreen, setCurrentUser, 
@@ -49,11 +49,11 @@ export default function ProjectPage() {
   }, [])
 
 
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  // const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
+  // const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   event.preventDefault();
+  // };
 
   const LABEL_WIDTH = 120;
   const LABEL_WIDTH_2 = 90;
@@ -105,16 +105,28 @@ const primary = {
 
 
 
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (clickedElement && !clickedElement.current.contains(event.target)) {
+  //       setClickedElement(null)
+  //       setCardClicked('');
+  //     }
+  //   };
+  //   document.addEventListener('click', handleClickOutside, true)
+  //   return () => {document.removeEventListener('click', handleClickOutside, true)}
+  // } , [clickedElement])
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (clickedElement && !clickedElement.current.contains(event.target)) {
-        setClickedElement(null)
+    const handleClickOutside = (event: MouseEvent) => {
+      const el = clickedElement?.current;
+      if (el && !el.contains(event.target as Node)) {
+        setClickedElement(null);
         setCardClicked('');
       }
     };
-    document.addEventListener('click', handleClickOutside, true)
-    return () => {document.removeEventListener('click', handleClickOutside, true)}
-  } , [clickedElement])
+    document.addEventListener('click', handleClickOutside, true);
+    return () => document.removeEventListener('click', handleClickOutside, true);
+  }, [clickedElement, setCardClicked, setClickedElement]);
 
   useEffect(() => {
     if(!projectQuery.isLoading) {
@@ -123,12 +135,13 @@ const primary = {
   }, [projectQuery.isLoading])
 
   
-  if (projectQuery.isLoading) return 
+  if (projectQuery.isLoading) return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2 }}>
-    <Box sx={{display: 'flex', flexWrap: 'wrap',  mt:10, ml:10 }}>
-      <CircularProgress></CircularProgress>
+      <Box sx={{display: 'flex', flexWrap: 'wrap',  mt:10, ml:10 }}>
+        <CircularProgress></CircularProgress>
+      </Box>
     </Box>
-    </Box>
+  )
 
 
   return (
@@ -145,7 +158,11 @@ const primary = {
         flexWrap:'wrap',
          pl:2,
         width:'100vw',
-        gap:'10px'
+        gap:'10px',
+        '& > *': {
+      flex: '0 0 calc(25% - 10px)',   // two per row
+      maxWidth: 'calc(25% - 10px)',
+    },
       }}
     >
       {projectQuery.data.map((item, index) => {
