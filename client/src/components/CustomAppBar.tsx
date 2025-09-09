@@ -61,14 +61,6 @@ const primary = {
     },
   });
 
-  const logoutQuery = useQuery({
-    queryKey:['logout'],
-    queryFn:async ()=> {
-      const response = await axios.get('/api/v1/auth/logout')
-    },
-    enabled:enableLogout
-  })
-
   return (
     <div>
       {/* <AppBar 

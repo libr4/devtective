@@ -19,18 +19,16 @@ export default function Header(props:any) {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', maxWidth:'75%', marginLeft:3 }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems:'center', maxWidth:'75%', marginLeft:1, pl:1 }}>
         <Box 
           sx={{
             width:'100%',
-            
             display:'flex',
             justifyContent:'space-between',
             flex:1,
           }}>
           <Typography
             variant="h6"
-            // noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
             sx={{

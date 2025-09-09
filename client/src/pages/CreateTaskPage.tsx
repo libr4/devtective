@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import NewTaskForm from '../components/NewTaskForm';
 import { useState } from 'react';
 import CollapsibleTable from '../components/CollapsibleTable';
+import NewTaskFormSecond from '../components/NewTaskFormSecond';
 
 export default function CreateTaskPage() {
 
@@ -26,9 +27,10 @@ export default function CreateTaskPage() {
   const [validation, setValidation] = useState('')
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2, }}>
-        <Header validation={validation} title="Nova Tarefa"></Header> 
-        <NewTaskForm setValidation={setValidation}></NewTaskForm>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap',  }}>
+        {/* <Header validation={validation} title="Nova Tarefa"></Header>  */}
+        {/* <NewTaskForm setValidation={setValidation}></NewTaskForm> */}
+        <NewTaskFormSecond setValidation={setValidation}></NewTaskFormSecond>
         {/* <Copyright></Copyright> */}
         <Footer></Footer>
     </Box>

@@ -36,27 +36,12 @@ import DynamicFilter from './DynamicFilter';
 import FilterContainer from './FilterContainer';
 
 export default function SearchTaskForm() {
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-  };
 
   const {projectId} = useParams();
   console.log("projectid", projectId)
 
-  
-
   const LABEL_WIDTH = 120;
   const LABEL_WIDTH_2 = 90;
-
-  async function getHello() {
-    const response = await axios.get('/api/hello') 
-    console.log(response.data)
-    return response;
-  }
 
 const primary = {
   main: '#00796b',           // Main teal color
@@ -201,6 +186,7 @@ const handleProjectUpdate = (newProject) => {
   // })
 
   console.log("search params: ", searchParams)
+  console.log("useParams(): ", useParams());
   
   return (
   <ThemeProvider theme={theme}>

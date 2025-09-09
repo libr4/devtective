@@ -28,11 +28,6 @@ import { Form, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAppContext } from '../context/AppProvider';
 
-export function getHello(e) {
-    e.preventDefault();
-    // console.log(test)
-    return null;
-}
   const dicionario = {
     title:'Título',
     type:'Tipo',
@@ -63,7 +58,21 @@ export default function NewTaskForm({setValidation}) {
   const navigate = useNavigate();
   const {projectId} = useParams();
 
-  const memberDetails = JSON.parse(localStorage.getItem('currentProject') as string).memberDetails;
+  // const memberDetails = JSON.parse(localStorage.getItem('currentProject') as string).memberDetails;
+  const safeGetJSON = <T,>(k: string, fallback: T): T => {
+  try {
+    const raw = localStorage.getItem(k);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    return parsed ?? fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+type Member = { _id: string; name: string };
+const project = safeGetJSON<any>('currentProject', null);
+const memberDetails: Member[] = project?.memberDetails ?? [];
 
   const newTaskMutation = useMutation({
     mutationFn: async (data:NewTask) => await axios.post(`/api/v1/projects/${projectId}/tasks`, data),

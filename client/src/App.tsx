@@ -9,7 +9,9 @@ import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Footer from './components/Footer';
 import AppProvider from './context/AppProvider';
 import { useQuery } from '@tanstack/react-query';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Toolbar } from '@mui/material';
+import CustomAppBarSecond from './components/CustomAppBarSecond';
+import CustomDrawerSecond from './components/CustomDrawerSecond';
 
 
 export default function App() {
@@ -45,11 +47,14 @@ export default function App() {
   return (
     <AppProvider>
       <CssBaseline />
-      <Box sx={{ display: "flex" }}>
-        <CustomAppBar />
-        <CustomDrawer />
-        <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
-          <Outlet />
+        <CustomAppBarSecond />
+      <Box sx={{ display: "flex", minHeight: "100dvh" }}>
+        <CustomDrawerSecond />
+        <Box component="main" sx={{flexGrow: 1, display: "flex", flexDirection: "column"}}>
+        {/* <Toolbar /> */}
+          <Box sx={{ p: 0, flex: 1,  }}>
+            <Outlet />
+          </Box>
         </Box>
         <Footer />
       </Box>

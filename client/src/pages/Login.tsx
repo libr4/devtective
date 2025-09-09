@@ -1,186 +1,263 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { GiSmokingPipe } from 'react-icons/gi';
-import { useState } from 'react';
-import { Form, redirect, useNavigate } from 'react-router-dom';
+// import * as React from 'react';
+// import Avatar from '@mui/material/Avatar';
+// import Button from '@mui/material/Button';
+// import CssBaseline from '@mui/material/CssBaseline';
+// import TextField from '@mui/material/TextField';
+// import Link from '@mui/material/Link';
+// import Grid from '@mui/material/Grid';
+// import Box from '@mui/material/Box';
+// import Typography from '@mui/material/Typography';
+// import Container from '@mui/material/Container';
+// import { createTheme, ThemeProvider } from '@mui/material/styles';
+// import { GiSmokingPipe } from 'react-icons/gi';
+// import { useState } from 'react';
+// import { Form, redirect, useNavigate } from 'react-router-dom';
 import cover from '../assets/detective.jpg'
-import axios from 'axios';
-import { useMutation } from '@tanstack/react-query';
+// import axios from 'axios';
+// import { useMutation } from '@tanstack/react-query';
 
-export function Copyright(props: any) {
+// SignIn.tsx
+import * as React from "react";
+import { useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  Alert,
+  Avatar,
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  Grid,
+  Link,
+  Paper,
+  TextField,
+  ThemeProvider,
+  Typography,
+  CircularProgress,
+  createTheme,
+} from "@mui/material";
+import { GiSmokingPipe } from "react-icons/gi";
+
+/** --------------------------------
+ *  Theme (module scope, no re-create)
+ * --------------------------------*/
+const primary = {
+  main: "#00796b",
+  light: "#48a999",
+  dark: "#004c40",
+  contrastText: "#ffffff",
+} as const;
+
+const theme = createTheme({
+  palette: { primary },
+});
+
+/** --------------------------------
+ *  Types
+ * --------------------------------*/
+interface LoginData {
+  username: string;
+  password: string;
+}
+
+/** --------------------------------
+ *  Small presentational component
+ * --------------------------------*/
+function Copyright(props: React.ComponentProps<typeof Typography>) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props} sx={{zIndex: (theme) => theme.zIndex.drawer + 1,}}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+      sx={{ ...(props.sx ?? {}) }}
+    >
+      {"Copyright © "}
+      <Link
+        color="inherit"
+        href="https://devtective.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         Devtective
-      </Link>{' '}
+      </Link>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-const primary = {
-  main: '#00796b',           // Main teal color
-  light: '#48a999',          // Lighter shade of the main color
-  dark: '#004c40',           // Darker shade of the main color
-  contrastText: '#ffffff'    // White text contrasts well with the main color
-};
-
-  const theme = createTheme({
-    palette: {
-      primary,
-      // secondary: purple,
-    },
-  });
-
-  export async function loginAction({request}) {
-    try {
-      const formData = await request.formData();
-      const data = Object.fromEntries(formData);
-      console.log(data)
-      await axios.post('/api/v1/auth/login', data);
-      return redirect('/projetos');
-    } catch (error) {
-      return error;
-    }
-  }
-
-
-    async function handleSubmit(e) {
-      e.preventDefault();
-      // const formData = await request.formData();
-      console.log(e)
-      // const data = Object.fromEntries(formData);
-      // loginQuery.mutate('oi');
-    }
-
-    interface loginData {
-      username:string;
-      password:string;
-    }
-
+/** --------------------------------
+ *  Page
+ * --------------------------------*/
 export default function SignIn() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const loginQuery = useMutation({
-    mutationFn: (data:loginData) => axios.post('/api/v1/auth/login', data),
-    onSuccess:() => {navigate('/projetos')}
-  })
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const data:loginData = Object.fromEntries(formData) as unknown as loginData;
-    loginQuery.mutate(data);
+    setErrorMsg(null);
+
+    const form = new FormData(event.currentTarget);
+    const data: LoginData = {
+      username: String(form.get("username") ?? ""),
+      password: String(form.get("password") ?? ""),
+    };
+
+    if (!data.username || !data.password) {
+      setErrorMsg("Preencha usuário e senha.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await axios.post("/api/v1/auth/login", data /*, { withCredentials: true } */);
+      navigate("/projetos");
+    } catch (err: unknown) {
+      setErrorMsg("Não foi possível entrar. Verifique suas credenciais.");
+      if (import.meta.env?.MODE === "development") console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  const [register, setRegister] = useState(false);
-  function handleRegisterToggle() {
-    setRegister(!register);
-  }
-
 
   return (
     <ThemeProvider theme={theme}>
-      {/* <Form 
-        method='post'> */}
-      <Box 
-      sx={{
-        backgroundImage:`url(${cover})`,
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        width:'100vw',
-        height:'100vh',
-
-      }}
+      <Box
+        sx={{
+          backgroundImage: `url(${cover})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          // backgroundPosition: { xs: "center", md: "left center", lg:"0% 10%" },
+          backgroundPosition: { xs: "center", md: "left center", lg:"90% 85%" },
+          // backgroundPosition: "left center",
+          // backgroundPosition: "0% 10%",
+          width: "100vw",
+          height: "100vh",
+        }}
       >
-      <Container 
-        
-        component="main" maxWidth="xs"
-        >
         <CssBaseline />
-        <Box
+
+        {/* Right-anchored, vertically centered container */}
+        <Container
+          component="main"
+          maxWidth="xs"
+          role="main"
           sx={{
-            // marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            ml: "auto",
+            mr: { xs: 2, md: 6, lg: 25 }, // push further right responsively
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            pb: 0,
           }}
         >
-          <Avatar sx={{ m: 1, mt:8, bgcolor: 'primary.main' }}>
-            <GiSmokingPipe size={40} />
-            {/* <LockOutlinedIcon /> */}
-          </Avatar>
-          <Typography component="h1" variant="h5">Entrar</Typography>
-          <Box onSubmit={handleSubmit} method='POST' component="form" noValidate sx={{ mt: 1 }}>
-            <TextField
-              size='small'
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              autoFocus
-              variant='filled'
-              sx={{
-                backgroundColor:'white'
-              }}
-            />
-            <TextField
-              size='small'
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              variant='filled'
-              sx={{
-                backgroundColor:'white'
-              }}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >Entrar</Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Esqueceu a senha?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="/register" color={'primary.dark'} onClick={handleRegisterToggle} variant="body2">
-                  {"Faça uma CONTA!"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
+          {/* Glassy card for contrast and alignment */}
+          <Paper
+            elevation={6}
+            sx={{
+              width: "100%",
+              p: { xs: 3, md: 4 },
+              borderRadius: 3,
+              bgcolor: "rgba(255,255,255,0.2)",
+              // backdropFilter: "blur(3px)",
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Avatar sx={{ mb: 1, bgcolor: "primary.main" }} aria-hidden>
+                <GiSmokingPipe size={32} />
+              </Avatar>
+
+              <Typography component="h1" variant="h5" sx={{ mb: 1 }}>
+                Entrar
+              </Typography>
+
+              {errorMsg && (
+                <Alert severity="error" sx={{ mt: 1, mb: 1, width: "100%" }}>
+                  {errorMsg}
+                </Alert>
+              )}
+
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                noValidate
+                sx={{ mt: 1, width: "100%" }}
+                aria-label="Formulário de login"
+              >
+                <TextField
+                  size="small"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="username"
+                  label="Usuário"
+                  name="username"
+                  autoComplete="username"
+                  autoFocus
+                  variant="filled"
+                  InputProps={{ disableUnderline: true }}
+                  sx={{
+                    "& .MuiFilledInput-root": {
+                      borderRadius: 1.5,
+                      boxShadow: 1,
+                      bgcolor: "common.white",
+                    },
+                  }}
+                />
+
+                <TextField
+                  size="small"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="password"
+                  name="password"
+                  label="Senha"
+                  type="password"
+                  autoComplete="current-password"
+                  variant="filled"
+                  InputProps={{ disableUnderline: true }}
+                  sx={{
+                    "& .MuiFilledInput-root": {
+                      borderRadius: 1.5,
+                      boxShadow: 1,
+                      bgcolor: "common.white",
+                    },
+                  }}
+                />
+
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? <CircularProgress size={22} /> : "Entrar"}
+                </Button>
+
+                <Grid container>
+                  <Grid item xs>
+                    <Link component={RouterLink} to="/forgot-password" variant="body2">
+                      Esqueceu a senha?
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link component={RouterLink} to="/register" variant="body2">
+                      {"Criar conta"}
+                    </Link>
+                  </Grid>
+                </Grid>
+              </Box>
+
+              <Copyright sx={{ mt: 3 }} />
+            </Box>
+          </Paper>
+        </Container>
       </Box>
-      {/* </Form> */}
     </ThemeProvider>
   );
 }

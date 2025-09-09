@@ -7,6 +7,7 @@ import { useAppContext } from '../context/AppProvider';
 import { useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import TaskViewSecond from '../components/TaskViewSecond';
 
 export default function TaskViewPage() {
 
@@ -23,21 +24,19 @@ export default function TaskViewPage() {
   }, [currentScreen])
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:10, ml:2, }}>
-      <Box
+    <Box sx={{ display: 'flex', flexWrap: 'wrap',  mt:0, ml:0, }}>
+      {/* <Box
         sx={{
           display:'flex',
           width:'65vw',
           justifyContent:'space-between',
-
-        }}
-
-      >
-        <Header title={title}></Header> 
-        <Box 
-        >
-          <Box sx={{display:'flex', alignItems:'end', flex:1.0, height:'100%'}}>
-          <Button 
+        }} */}
+      {/* > */}
+        {/* <Header title={title}></Header>  */}
+        {/* <Box  */}
+        {/* > */}
+          {/* <Box sx={{display:'flex', alignItems:'end', flex:1.0, height:'100%'}}> */}
+          {/* <Button 
             size='small'
             sx={{
               color:'#00796b',
@@ -48,11 +47,12 @@ export default function TaskViewPage() {
             variant='text'
             >
               Lançar movimentação
-          </Button>
-          </Box>
-        </Box>
-      </Box>
-        <TaskView></TaskView>
+          </Button> */}
+          {/* </Box> */}
+        {/* </Box> */}
+      {/* </Box> */}
+      <>
+        <TaskViewSecond></TaskViewSecond></>
     </Box>
   );
 }
